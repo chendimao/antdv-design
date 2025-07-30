@@ -21,12 +21,25 @@ export default defineConfig({
         globals: {
           vue: 'vue',
         },
+        chunkFileNames: (chunkInfo) => {
+          // 根据组件路径进行分组
+          if (chunkInfo.name.includes('crud')) {
+            return 'designItem/[name].[hash].js';
+          }
+          return 'js/[name].[hash].js';
+        },
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name.endsWith('.css')) {
+            return 'style.css';
+          }
+          return assetInfo.name;
+        }
       },
     },
     lib: {
       entry: 'package/index.js',
-      name: 'antdv-crud',
-      fileName: (format) => `antdv-crud.${format}.js`,
+      name: 'antdv-design',
+      fileName: (format) => `antdv-design.${format}.js`,
     },
     sourcemap: true,
   },

@@ -73,6 +73,7 @@ import numberConfig from './formControlConfig/numberConfig.vue';
 // 批量导入所有formControlConfig下的配置组件
 import tagConfig from './formControlConfig/tagConfig.vue';
 import dateConfig from './formControlConfig/dateConfig.vue';
+import dateTimeConfig from './formControlConfig/datetimeConfig.vue';
 import rateConfig from './formControlConfig/rateConfig.vue';
 import tabsConfig from './formControlConfig/tabsConfig.vue';
 import timeConfig from './formControlConfig/timeConfig.vue';
@@ -386,6 +387,7 @@ const configComponentMap = {
   number: numberConfig,
   tag: tagConfig,
   date: dateConfig,
+  datetime: dateTimeConfig,
   rate: rateConfig,
   tabs: tabsConfig,
   time: timeConfig,

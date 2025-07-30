@@ -1,19 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import applyManager from '../applyManager/index.vue';
 import applyManager2 from '../applyManager2/index.vue';
-import formDesign from '../formDesign/index.vue';
+import Home from '../views/home/index.vue';
 import Test from '../../package/formDesign/test.vue';
 
 export const myRoutes = [
 
   {
     path: '/',
-    name: 'form',
+    name: 'home',
     title: '',
-    component: formDesign
+    component: Home
   },{
     path: '/test',
-    name: 'home',
+    name: 'form',
     title: '',
     component: Test
   },
@@ -23,13 +23,7 @@ export const myRoutes = [
     name: 'home1',
     title: '',
     component: applyManager2
-  },{
-    path: '/form-design',
-    // redirect: '/home1',
-    name: 'formDesign',
-    title: '',
-    component: formDesign
-  },
+  }, 
 
 ];
 

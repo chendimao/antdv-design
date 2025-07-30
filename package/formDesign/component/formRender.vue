@@ -26,15 +26,20 @@
   
  
       <template #item="{element,index}">
-        <div class=" dragging" style="width:100%;position:relative;">
-          <div class="drag-handle" style="position:absolute;left:0;top:0;z-index:2;cursor:move;">
+        <div class="dragging" :class="{ 'is-hidden': isElementHidden(element) }" style="width:100%;position:relative;">
+          <template v-if="isElementHidden(element)">
+            <div class="hidden-label">已隐藏</div>
+          </template>
+          <div class="drag-handle" 
+               style="position:absolute;left:0;top:0;z-index:2;cursor:move;"
+               :class="{ 'show': _currentItem?.id == element.id }">
             <DragOutlined />
           </div>
           <!-- 保留原有表单项内容 -->
           <template v-if="element.type == 'grid' && element?.columns.length > 0">
             <div 
               @click.stop="emitSelectComponent(element)"
-              :class="['grid-container', {'active-grid': _currentItem.id == element.id }]"
+              :class="['grid-container', {'active-grid': _currentItem?.id == element.id }]"
             >
               <a-row :gutter="10" class="grid-row"  >
                 <a-col 
@@ -54,7 +59,7 @@
                 </a-col>
               </a-row>
               <DeleteOutlined 
-                  v-if="_currentItem.id == element.id" 
+                  v-if="_currentItem?.id == element.id" 
                   class="delete-icon"
                   @click="handleDeleteComponent(index)"
                 />
@@ -63,7 +68,7 @@
           <template v-else-if="element.type == 'tabs' && element?.columns?.length > 0">
             <div
               @click.stop="emitSelectComponent(element)"
-              :class="['grid-container', {'active-grid': _currentItem.id == element.id }]"
+              :class="['grid-container', {'active-grid': _currentItem?.id == element.id }]"
             >
               <a-tabs
                 :activeKey="element.activeKey"
@@ -92,16 +97,16 @@
                 </a-tab-pane>
               </a-tabs>
               <DeleteOutlined 
-                  v-if="_currentItem.id == element.id" 
+                  v-if="_currentItem?.id == element.id" 
                   class="delete-icon"
                   @click="handleDeleteComponent(index)"
                 />
             </div>
           </template>
           <template v-else>
-            <a-col class="form-field" :span="24" v-if="element.type && (element.show??true)">
+            <a-col class="form-field" :span="24" v-if="element.type">
               <div class="drag-mas" @click.stop="emitSelectComponent(element)"></div>
-              <div :class="['field-container', {'active': _currentItem.id == element.id}]">
+              <div :class="['field-container', {'active': _currentItem?.id == element.id}]">
                 <a-form-item
                   :label="element.text"
                   :name="element.name"
@@ -109,11 +114,12 @@
                   :wrapper-col="element.wrapperCol??{style: {width: '100%'}}"
                   :labelAlign="element.labelAlign"
                 >
+                
                   <aCrudFormItem :item="element" :validateFun="() => {}"/>
                   <span class="field-id">{{element.id}}</span>
                 </a-form-item>
                 <DeleteOutlined 
-                    v-if="_currentItem.id == element.id" 
+                    v-if="_currentItem?.id == element.id" 
                     class="delete-icon"
                     @click="handleDeleteComponent(index)"
                   />
@@ -210,7 +216,7 @@ const onDragChange = (event) => {
   //   emits('selectAdded', addedElement, event.added.newIndex);
   // }
   // 如果需要在拖动结束后也触发父组件的 onDragChange 事件，可以取消注释下面这行
-  // emits('onDragChange',event)
+  emits('onDragChange',event)
 };
 
 function onDragStart(event) {
@@ -227,6 +233,27 @@ function emitSelectComponent(element) {
   console.log("formRender: 触发选中事件", element);
   emits('selectComponent', element);
 }
+
+function isElementHidden(element: any) {
+  if (typeof element.show === 'function') {
+    try {
+      return element.show(element, _formData.value, element.type) === false;
+    } catch (e) {
+      return false;
+    }
+  }
+  return element.show === false;
+}
+
+// 暴露函数给模板使用
+defineExpose({
+  emitSelectComponent,
+  handleDeleteComponent,
+  onDragChange,
+  onDragStart,
+  onDragEnd,
+  isElementHidden
+});
 
 </script>
 
@@ -416,6 +443,10 @@ export default {
     transform: scale(1.1);
     background: #40a9ff;
   }
+  
+  &.show {
+    opacity: 1;
+  }
 }
 
 .field-id {
@@ -533,7 +564,8 @@ export default {
   transition: opacity 0.2s;
 }
 .form-item-wrapper:hover .drag-handle,
-.form-item-wrapper.active .drag-handle {
+.form-item-wrapper.active .drag-handle,
+.drag-handle.show {
   opacity: 1;
 }
 .drag-chosen {
@@ -541,5 +573,27 @@ export default {
   z-index: 10;
   background: #fff;
   border: 1.5px solid #1890ff;
+}
+.is-hidden {
+  opacity: 0.4;
+}
+.hidden-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff2018;
+  font-size: 18px;
+  font-weight: bold;
+  background: rgba(255,255,255,0.5);
+  z-index: 10;
+  pointer-events: none;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal;
 }
 </style>

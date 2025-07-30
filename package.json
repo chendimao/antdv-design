@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
+    "build": "vite build --config vite.lib.config.ts",
+    "build:demo": "vite build --config vite.config.ts",
     "preview": "vite preview",
     "dts": "vue-tsc --declaration --emitDeclarationOnly ",
     "docs:dev": "vitepress dev docs",
@@ -29,7 +30,7 @@
     "@vitejs/plugin-vue": "^5.2.1",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
     "ant-design-vue": "3",
-    "antdv-crud": "^2.0.66",
+    "antdv-crud": "^2.0.67",
     "axios": "^1.6.8",
     "codemirror": "^5",
     "codemirror-editor-vue3": "^2.8.0",

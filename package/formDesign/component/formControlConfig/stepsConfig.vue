@@ -1,64 +1,61 @@
 <template>
   <div>
+    <!-- 使用通用配置组件 -->
+    <CommonConfig
+      v-model:disabled="modelValue.$attrs.disabled"
+      v-model:disabledType="modelValue.disabledType"
+      v-model:show="modelValue.show"
+      v-model:showType="modelValue.showType"
+      v-model:size="modelValue.$attrs.size"
+      :events="stepsEvents"
+      @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
+    />
+
     <a-form-item label="默认值">
-      <a-input v-model:value="modelValue.value" />
-    </a-form-item>
-    <a-form-item label="步骤">
-      <a-input v-model:value="modelValue.$attrs.stepsStr" placeholder="格式: 步骤1,步骤2,步骤3" />
-    </a-form-item>
-    <a-form-item label="方向">
-      <a-select v-model:value="modelValue.$attrs.direction">
-        <a-select-option value="horizontal">横向</a-select-option>
-        <a-select-option value="vertical">纵向</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="类型">
-      <a-select v-model:value="modelValue.$attrs.type">
-        <a-select-option value="default">默认</a-select-option>
-        <a-select-option value="navigation">导航</a-select-option>
-        <a-select-option value="inline">内嵌</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="尺寸">
-      <a-select v-model:value="modelValue.$attrs.size">
-        <a-select-option value="default">默认</a-select-option>
-        <a-select-option value="small">小</a-select-option>
-      </a-select>
+      <a-input-number v-model:value="modelValue.value" :min="0" style="width: 100%;" />
     </a-form-item>
     <a-form-item label="当前步骤">
       <a-input-number v-model:value="modelValue.$attrs.current" :min="0" />
     </a-form-item>
+    <a-form-item label="方向">
+      <a-select v-model:value="modelValue.$attrs.direction">
+        <a-select-option value="horizontal">水平</a-select-option>
+        <a-select-option value="vertical">垂直</a-select-option>
+      </a-select>
+    </a-form-item>
+    <a-form-item label="标签位置">
+      <a-select v-model:value="modelValue.$attrs.labelPlacement">
+        <a-select-option value="horizontal">水平</a-select-option>
+        <a-select-option value="vertical">垂直</a-select-option>
+      </a-select>
+    </a-form-item>
     <a-form-item label="进度点">
       <a-switch v-model:checked="modelValue.$attrs.progressDot" />
     </a-form-item>
-    <a-form-item label="标签放下方式">
-      <a-select v-model:value="modelValue.$attrs.labelPlacement">
-        <a-select-option value="horizontal">横向</a-select-option>
-        <a-select-option value="vertical">纵向</a-select-option>
-      </a-select>
+    <a-form-item label="响应式">
+      <a-switch v-model:checked="modelValue.$attrs.responsive" />
     </a-form-item>
-    <a-form-item label="起始序号">
-      <a-input-number v-model:value="modelValue.$attrs.initial" :min="0" />
-    </a-form-item>
-    <a-form-item label="状态">
-      <a-select v-model:value="modelValue.$attrs.status">
-        <a-select-option value="process">进行中</a-select-option>
-        <a-select-option value="wait">等待</a-select-option>
-        <a-select-option value="finish">已完成</a-select-option>
-        <a-select-option value="error">错误</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="点状步骤条">
-      <a-switch v-model:checked="modelValue.$attrs.dots" />
+    <a-form-item label="步骤条">
+      <a-textarea v-model:value="modelValue.$attrs.items" placeholder="步骤配置" />
     </a-form-item>
   </div>
 </template>
 
 <script setup>
+import CommonConfig from './CommonConfig.vue';
+
 const props = defineProps({
   modelValue: { type: Object, required: true }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
 if (!props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
+
+// 定义Steps组件支持的事件
+const stepsEvents = [
+  { key: 'onChange', label: 'change 事件' }
+];
 </script> 

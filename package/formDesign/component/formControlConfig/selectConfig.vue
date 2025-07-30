@@ -1,14 +1,25 @@
 <template>
   <div>
-    <a-form-item label="占位符">
-      <a-input v-model:value="modelValue.$attrs.placeholder" />
-    </a-form-item>
-    <a-form-item label="允许清除">
-      <a-switch v-model:checked="modelValue.$attrs.allowClear" />
-    </a-form-item>
-    <a-form-item label="禁用">
-      <a-switch v-model:checked="modelValue.$attrs.disabled" />
-    </a-form-item>
+    <!-- 使用通用配置组件 -->
+    <CommonConfig
+      v-model:disabled="modelValue.$attrs.disabled"
+      v-model:disabledType="modelValue.disabledType"
+      v-model:show="modelValue.show"
+      v-model:showType="modelValue.showType"
+      v-model:placeholder="modelValue.$attrs.placeholder"
+      v-model:allowClear="modelValue.$attrs.allowClear"
+      v-model:bordered="modelValue.$attrs.bordered"
+      v-model:size="modelValue.$attrs.size"
+      :events="selectEvents"
+      @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
+      @update:onSelect="(fn) => modelValue.$attrs.onSelect = fn"
+      @update:onDeselect="(fn) => modelValue.$attrs.onDeselect = fn"
+      @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
+      @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
+      @update:onSearch="(fn) => modelValue.$attrs.onSearch = fn"
+      @update:onDropdownVisibleChange="(fn) => modelValue.$attrs.onDropdownVisibleChange = fn"
+    />
+
     <a-form-item label="多选模式">
       <a-select v-model:value="modelValue.$attrs.mode">
         <a-select-option value="">单选</a-select-option>
@@ -24,16 +35,6 @@
     </a-form-item>
     <a-form-item label="最大标签文本长度">
       <a-input-number v-model:value="modelValue.$attrs.maxTagTextLength" :min="0" />
-    </a-form-item>
-    <a-form-item label="尺寸">
-      <a-select v-model:value="modelValue.$attrs.size">
-        <a-select-option value="default">默认</a-select-option>
-        <a-select-option value="small">小</a-select-option>
-        <a-select-option value="large">大</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label="边框">
-      <a-switch v-model:checked="modelValue.$attrs.bordered" />
     </a-form-item>
     <a-form-item label="标签值模式">
       <a-switch v-model:checked="modelValue.$attrs.labelInValue" />
@@ -86,12 +87,29 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import CommonConfig from './CommonConfig.vue';
+
 const props = defineProps({
   modelValue: { type: Object, required: true }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
 if (!props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
+
+// 定义Select组件支持的事件
+const selectEvents = [
+  { key: 'onChange', label: 'change 事件' },
+  { key: 'onSelect', label: 'select 事件' },
+  { key: 'onDeselect', label: 'deselect 事件' },
+  { key: 'onFocus', label: 'focus 事件' },
+  { key: 'onBlur', label: 'blur 事件' },
+  { key: 'onSearch', label: 'search 事件' },
+  { key: 'onDropdownVisibleChange', label: 'dropdownVisibleChange 事件' }
+];
+
 // 初始化 options
 if (!Array.isArray(props.modelValue.$attrs.options)) {
   props.modelValue.$attrs.options = [
@@ -121,3 +139,13 @@ watch(() => props.modelValue.$attrs.optionsValueType, (val) => {
   });
 });
 </script>
+
+<style scoped lang="less">
+.options-config {
+  .option-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+}
+</style>

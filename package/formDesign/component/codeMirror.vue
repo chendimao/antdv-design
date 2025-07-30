@@ -129,7 +129,7 @@ const props = defineProps({
     }
 })
 
-const emits = defineEmits(['update:value', 'update:visible']);
+const emits = defineEmits(['update:value', 'update:visible', 'save']);
 
 const cmOptions = {
     // 语言及语法模式
@@ -337,6 +337,7 @@ const handleSave = () => {
     }
     if (isValid) {
         emits('update:value', localCode.value);
+        emits('save', localCode.value);
         if (props.showType === 'modal') {
             handleVisibleChange(false);
         }

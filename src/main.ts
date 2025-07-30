@@ -1,13 +1,16 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
- import antdFormDesign from '../package/index.js';
- //import antdCrud from '../package/crud.js';
+ //import antdFormDesign from '../package/index.js';
+//import antdCrud from '../package/crud.js';
  import antdCrud from 'antdv-crud';
 import VXETable from "vxe-table";
 import 'vxe-table/lib/style.css';
 import 'antdv-crud/dist/style.css';
 
+ //import antdDesign from '../dist/antdv-design.es.js';
+import antdDesign from '../package/index.js';
+import '../dist/style.css';
 import router from './router/index';
 
 // ...可选 UI
@@ -62,7 +65,7 @@ antdCrud.config(app, {
 });
 app.use(antdCrud);
 
- app.use(antdFormDesign);
+ app.use(antdDesign);
 
 app.use(useTable);
 app.use(router);

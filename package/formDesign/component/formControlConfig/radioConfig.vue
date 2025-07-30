@@ -1,18 +1,69 @@
 <template>
-  <div class="radio-config">
-    <!-- RadioGroup 配置 -->
-  
-
-    <a-form-item label="禁用状态">
-      <a-switch v-model:checked="modelValue.$attrs.disabled" />
+  <div>
+    <a-form-item label="默认值">
+      <div class="default-value-config">
+        <a-select v-model:value="modelValue.$attrs.defaultValueType" style="width: 88px; margin-right: 8px;">
+          <a-select-option value="string">字符串</a-select-option>
+          <a-select-option value="number">数字</a-select-option>
+        </a-select>
+        <a-input 
+          v-if="modelValue.$attrs.defaultValueType === 'string'"
+          v-model:value="modelValue.value" 
+          placeholder="请输入默认值" 
+          style="width: calc(100% - 88px);" 
+        />
+        <a-input-number 
+          v-else
+          v-model:value="modelValue.value" 
+          placeholder="请输入默认值" 
+          style="width: calc(100% - 88px);" 
+        />
+      </div>
     </a-form-item>
- 
+
+    <!-- 使用通用配置组件 -->
+    <CommonConfig
+      v-model:disabled="modelValue.$attrs.disabled"
+      v-model:disabledType="modelValue.disabledType"
+      v-model:show="modelValue.show"
+      v-model:showType="modelValue.showType"
+      v-model:size="modelValue.$attrs.size"
+      :events="radioEvents"
+      @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
+      @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
+      @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
+    />
+
+    <!-- RadioGroup 配置 -->
+    <a-form-item label="按钮样式">
+      <a-select v-model:value="modelValue.$attrs.buttonStyle">
+        <a-select-option value="outline">描边</a-select-option>
+        <a-select-option value="solid">实心</a-select-option>
+      </a-select>
+    </a-form-item>
+    <a-form-item label="选项类型">
+      <a-select v-model:value="modelValue.$attrs.optionType">
+        <a-select-option value="default">默认</a-select-option>
+        <a-select-option value="button">按钮</a-select-option>
+      </a-select>
+    </a-form-item>
+    <a-form-item label="名称">
+      <a-input v-model:value="modelValue.$attrs.name" />
+    </a-form-item>
+
+    <!-- Radio 配置 -->
+    <a-form-item label="自动获取焦点">
+      <a-switch v-model:checked="modelValue.$attrs.autofocus" />
+    </a-form-item>
+    <a-form-item label="选中状态">
+      <a-switch v-model:checked="modelValue.$attrs.checked" />
+    </a-form-item>
 
     <!-- 选项配置 -->
     <a-form-item label="选项配置">
       <div class="options-config">
         <div style="margin-bottom: 8px;">
-          <a-select v-model:value="modelValue.$attrs.optionsValueType" style="width: 120px; margin-right: 8px;">
+          <a-select v-model:value="modelValue.$attrs.optionsValueType" style="width: 88px; margin-right: 8px;">
             <a-select-option value="string">字符串</a-select-option>
             <a-select-option value="number">数字</a-select-option>
           </a-select>
@@ -42,61 +93,15 @@
       </div>
     </a-form-item>
 
-    <a-form-item label="选项类型">
-      <a-radio-group v-model:value="modelValue.$attrs.optionType">
-        <a-radio value="default">默认</a-radio>
-        <a-radio value="button">按钮</a-radio>
-      </a-radio-group>
-    </a-form-item>
-    <a-form-item label="按钮样式">
-      <a-radio-group v-model:value="modelValue.$attrs.buttonStyle">
-        <a-radio value="outline">描边</a-radio>
-        <a-radio value="solid">填色</a-radio>
-      </a-radio-group>
-    </a-form-item>
-    <a-form-item label="大小">
-      <a-radio-group v-model:value="modelValue.$attrs.size">
-        <a-radio value="large">大</a-radio>
-        <a-radio value="default">默认</a-radio>
-        <a-radio value="small">小</a-radio>
-      </a-radio-group>
-    </a-form-item>
- 
-
-    <a-form-item label="选中状态">
-      <a-switch v-model:checked="modelValue.$attrs.checked" />
+    <!-- CSS 配置 -->
+    <a-form-item label="CSS样式">
+      <a-button @click="cssEditorVisible = true" type="primary" size="small">编辑CSS</a-button>
     </a-form-item>
 
-    <a-form-item label="默认值">
-      <div class="default-value-config">
-        <a-select v-model:value="modelValue.$attrs.defaultValueType" style="width: 120px; margin-right: 8px;" @change="handleDefaultValueTypeChange">
-          <a-select-option value="string">字符串</a-select-option>
-          <a-select-option value="number">数字</a-select-option>
-        </a-select>
-        <a-input 
-          v-if="modelValue.$attrs.defaultValueType === 'string'"
-          v-model:value="modelValue.value" 
-          placeholder="请输入默认值" 
-          style="width: calc(100% - 88px);" 
-        />
-        <a-input-number 
-          v-else
-          v-model:value="modelValue.value" 
-          placeholder="请输入默认值" 
-          style="width: calc(100% - 88px);" 
-        />
-      </div>
-    </a-form-item>
-
-    <!-- 事件处理 -->
-    <a-form-item label="事件处理">
-      <a-button @click="showEventCodeEditor" type="primary" style="margin-top:5px;">编辑事件处理</a-button>
-    </a-form-item>
-
-    <!-- 事件处理代码编辑器模态框 -->
+    <!-- CSS编辑器模态框 -->
     <a-modal
-      v-model:visible="eventEditorVisible"
-      title="事件处理代码编辑"
+      v-model:visible="cssEditorVisible"
+      title="CSS样式编辑"
       width="100%"
       :footer="null"
       wrap-class-name="full-modal"
@@ -105,106 +110,28 @@
       :destroyOnClose="true"
     >
       <div style="height: calc(100vh - 130px);">
-        <a-tabs v-model:activeKey="activeEventTab">
-          <a-tab-pane key="onChange" tab="change 事件">
-            <code-mirror
-              v-model:value="eventCodeMap.onChange"
-              :options="{ 
-                theme: 'monokai',
-                lineNumbers: true,
-                lineWrapping: true,
-                tabSize: 2,
-                indentUnit: 2,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                styleActiveLine: true
-              }"
-              :showCheckSyntax="false"
-              :showSave="false"
-              :showCancel="false"
-              :showFooter="false"
-              :language="'javascript'"
-              :height="'calc(100vh - 180px)'"
-              :width="'100%'"
-              @update:value="(value) => handleCodeChange('onChange', value)"
-            />
-          </a-tab-pane>
-          <a-tab-pane key="onFocus" tab="focus 事件">
-            <code-mirror
-              v-model:value="eventCodeMap.onFocus"
-              :options="{ 
-                theme: 'monokai',
-                lineNumbers: true,
-                lineWrapping: true,
-                tabSize: 2,
-                indentUnit: 2,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                styleActiveLine: true
-              }"
-              :showCheckSyntax="false"
-              :showSave="false"
-              :showCancel="false"
-              :showFooter="false"
-              :language="'javascript'"
-              :height="'calc(100vh - 180px)'"
-              :width="'100%'"
-              @update:value="(value) => handleCodeChange('onFocus', value)"
-            />
-          </a-tab-pane>
-          <a-tab-pane key="onBlur" tab="blur 事件">
-            <code-mirror
-              v-model:value="eventCodeMap.onBlur"
-              :options="{ 
-                theme: 'monokai',
-                lineNumbers: true,
-                lineWrapping: true,
-                tabSize: 2,
-                indentUnit: 2,
-                matchBrackets: true,
-                autoCloseBrackets: true,
-                styleActiveLine: true
-              }"
-              :showCheckSyntax="false"
-              :showSave="false"
-              :showCancel="false"
-              :showFooter="false"
-              :language="'javascript'"
-              :height="'calc(100vh - 180px)'"
-              :width="'100%'"
-              @update:value="(value) => handleCodeChange('onBlur', value)"
-            />
-          </a-tab-pane>
-        </a-tabs>
+        <code-mirror
+          v-model:value="modelValue.css"
+          :options="{ 
+            theme: 'monokai',
+            lineNumbers: true,
+            lineWrapping: true,
+            tabSize: 2,
+            indentUnit: 2,
+            matchBrackets: true,
+            autoCloseBrackets: true,
+            styleActiveLine: true
+          }"
+          :showSave="false"
+          :language="'css'"
+          :height="'calc(100vh - 180px)'"
+          :width="'100%'"
+        />
         <div class="editor-footer">
-          <a-button @click="cancelEdit">取消</a-button>
-          <a-button type="primary" @click="saveEventHandlers" style="margin-left: 8px;">保存</a-button>
+          <a-button @click="cssEditorVisible = false">关闭</a-button>
         </div>
       </div>
     </a-modal>
-
-    <!-- 额外样式 -->
-    <a-form-item label="自定义样式">
-      <code-mirror
-        v-model:value="modelValue.css"
-        :options="{ 
-          theme: 'monokai',
-          lineNumbers: true,
-          lineWrapping: true,
-          tabSize: 2,
-          indentUnit: 2,
-          matchBrackets: true,
-          autoCloseBrackets: true,
-          styleActiveLine: true
-        }"
-        :showSave="false"
-        :language="'css'"
-        :height="'200px'"
-        :width="'100%'"
-      />
-    </a-form-item>
-
-    
   </div>
 </template>
 
@@ -212,7 +139,7 @@
 import { defineProps, defineEmits, watch, ref } from 'vue';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import CodeMirror from '../codeMirror.vue';
-import {message} from "ant-design-vue";
+import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
   modelValue: {
@@ -222,6 +149,13 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['update:modelValue']);
+
+// 定义Radio组件支持的事件
+const radioEvents = [
+  { key: 'onChange', label: 'change 事件' },
+  { key: 'onFocus', label: 'focus 事件' },
+  { key: 'onBlur', label: 'blur 事件' }
+];
 
 // 初始化配置
 const initConfig = () => {
@@ -251,8 +185,7 @@ const initConfig = () => {
     name: props.modelValue.$attrs.name || '',
     options: options,
     optionType: props.modelValue.$attrs.optionType || 'default',
-    size: props.modelValue.$attrs.size || 'default',
-    value: props.modelValue.value || '',
+    size: props.modelValue.$attrs.size || 'default', 
     defaultValueType: props.modelValue.$attrs.defaultValueType || (typeof props.modelValue.value === 'number' ? 'number' : 'string'),
 
     // Radio 配置
@@ -260,7 +193,7 @@ const initConfig = () => {
     checked: props.modelValue.$attrs.checked || false,
 
     // 事件处理
-    onChange: props.modelValue.$attrs.onChange || (() => {})
+    onChange: props.modelValue.$attrs.onChange || ((...data) => {})
   };
 
   // 更新配置
@@ -292,131 +225,19 @@ const handleValueTypeChange = (index) => {
 
 // 添加选项
 const addOption = () => {
-  const options = props.modelValue.$attrs.options || props.modelValue.options || [];
-  const newOption = {
-    label: `选项${options.length + 1}`,
-    value: options.length + 1,
-    valueType: 'number',
-    disabled: false
-  };
-  
-  // 同时更新两个位置
-  if (!props.modelValue.$attrs.options) {
-    props.modelValue.$attrs.options = [];
-  }
-  props.modelValue.$attrs.options.push(newOption);
-  props.modelValue.options = props.modelValue.$attrs.options;
+  props.modelValue.$attrs.options.push({
+    label: `选项${props.modelValue.$attrs.options.length + 1}`,
+    value: ''
+  });
 };
 
 // 删除选项
 const removeOption = (index) => {
-  if (props.modelValue.$attrs.options) {
-    props.modelValue.$attrs.options.splice(index, 1);
-    props.modelValue.options = props.modelValue.$attrs.options;
-  } else if (props.modelValue.options) {
-    props.modelValue.options.splice(index, 1);
-  }
+  props.modelValue.$attrs.options.splice(index, 1);
 };
 
-// 方法
-const handleFocus = () => {
-  // 实现 focus 方法
-  console.log('focus');
-};
-
-const handleBlur = () => {
-  // 实现 blur 方法
-  console.log('blur');
-};
-
-// 处理默认值类型变化
-const handleDefaultValueTypeChange = () => {
-  if (props.modelValue.$attrs.defaultValueType === 'number') {
-    props.modelValue.value = props.modelValue.value ? Number(props.modelValue.value) : 0;
-  } else {
-    props.modelValue.value = props.modelValue.value ? String(props.modelValue.value) : '';
-  }
-};
-
-// 事件编辑器相关
-const eventEditorVisible = ref(false);
-const activeEventTab = ref('onChange');
-const eventCodeMap = ref({
-  onChange: '',
-  onFocus: '',
-  onBlur: ''
-});
-const originalEventCodeMap = ref({
-  onChange: '',
-  onFocus: '',
-  onBlur: ''
-});
-
-// 显示事件编辑器
-const showEventCodeEditor = () => {
-  // 将函数转换为字符串
-  eventCodeMap.value.onChange = typeof props.modelValue.$attrs.onChange === 'function' 
-    ? props.modelValue.$attrs.onChange.toString().replace(/^function\s*\(/, 'function(') 
-    : (props.modelValue.$attrs.onChange || '');
-  eventCodeMap.value.onFocus = typeof props.modelValue.$attrs.onFocus === 'function' 
-    ? props.modelValue.$attrs.onFocus.toString().replace(/^function\s*\(/, 'function(') 
-    : (props.modelValue.$attrs.onFocus || '');
-  eventCodeMap.value.onBlur = typeof props.modelValue.$attrs.onBlur === 'function' 
-    ? props.modelValue.$attrs.onBlur.toString().replace(/^function\s*\(/, 'function(') 
-    : (props.modelValue.$attrs.onBlur || '');
-  
-  // 保存原始值
-  originalEventCodeMap.value = JSON.parse(JSON.stringify(eventCodeMap.value));
-  
-  eventEditorVisible.value = true;
-};
-
-// 处理代码变化
-const handleCodeChange = (eventName, value) => {
-  eventCodeMap.value[eventName] = value || '';
-};
-
-// 保存事件处理函数
-const saveEventHandlers = () => {
-  try {
-    // 验证并转换代码为函数
-    const convertToFunction = (code) => {
-      if (!code.trim()) return null;
-      try {
-        // 尝试将代码转换为函数
-        const funcStr = code.trim();
-        // 如果代码不是以 function 开头，包装成函数
-        // const wrappedCode = funcStr.startsWith('function') 
-        //   ? funcStr 
-        //   : `function(e) { ${funcStr} }`;
-        return new Function('return ' + funcStr)();
-      } catch (e) {
-        throw new Error(`函数转换失败: ${e.message}`);
-      }
-    };
-
-    // 转换并保存事件处理函数
-    props.modelValue.$attrs.onChange = convertToFunction(eventCodeMap.value.onChange);
-    props.modelValue.$attrs.onFocus = convertToFunction(eventCodeMap.value.onFocus);
-    props.modelValue.$attrs.onBlur = convertToFunction(eventCodeMap.value.onBlur);
-    console.log(props.modelValue, eventCodeMap.value.onChange)
-    // 触发更新
-    emit('update:modelValue', props.modelValue);
-    
-    eventEditorVisible.value = false;
-    message.success('事件处理函数保存成功');
-  } catch (e) {
-    console.error('事件处理函数解析错误:', e);
-    message.error(e.message || '事件处理函数语法错误，请检查代码');
-  }
-};
-
-// 取消编辑
-const cancelEdit = () => {
-  // 恢复原始值
-  eventCodeMap.value = JSON.parse(JSON.stringify(originalEventCodeMap.value));
-  eventEditorVisible.value = false;
-};
+// CSS编辑器相关
+const cssEditorVisible = ref(false);
 </script>
 
 <style scoped lang="less">

@@ -3,12 +3,28 @@
     <a-form-item label="默认值">
       <a-date-picker v-model:value="modelValue.value" style="width: 100%;" />
     </a-form-item>
-    <a-form-item label="占位符">
-      <a-input v-model:value="modelValue.$attrs.placeholder" />
-    </a-form-item>
-    <a-form-item label="禁用">
-      <a-switch v-model:checked="modelValue.$attrs.disabled" />
-    </a-form-item>
+    
+    <!-- 使用通用配置组件 -->
+    <CommonConfig
+      v-model:disabled="modelValue.$attrs.disabled"
+      v-model:disabledType="modelValue.disabledType"
+      v-model:show="modelValue.show"
+      v-model:showType="modelValue.showType"
+      v-model:placeholder="modelValue.$attrs.placeholder"
+      v-model:allowClear="modelValue.$attrs.allowClear"
+      v-model:bordered="modelValue.$attrs.bordered"
+      v-model:size="modelValue.$attrs.size"
+      v-model:status="modelValue.$attrs.status"
+      v-model:autoFocus="modelValue.$attrs.autoFocus"
+      :events="dateEvents"
+      @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
+      @update:onOpenChange="(fn) => modelValue.$attrs.onOpenChange = fn"
+      @update:onPanelChange="(fn) => modelValue.$attrs.onPanelChange = fn"
+      @update:onOk="(fn) => modelValue.$attrs.onOk = fn"
+      @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
+      @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
+    />
+
     <a-form-item label="显示时间">
       <a-switch v-model:checked="modelValue.$attrs.showTime" />
     </a-form-item>
@@ -24,37 +40,14 @@
         <a-select-option value="year">年</a-select-option>
       </a-select>
     </a-form-item>
-    <a-form-item label="允许清除">
-      <a-switch v-model:checked="modelValue.$attrs.allowClear" />
-    </a-form-item>
     <a-form-item label="只读">
       <a-switch v-model:checked="modelValue.$attrs.inputReadOnly" />
-    </a-form-item>
-    <a-form-item label="边框">
-      <a-switch v-model:checked="modelValue.$attrs.bordered" />
-    </a-form-item>
-    <a-form-item label="尺寸">
-      <a-select v-model:value="modelValue.$attrs.size">
-        <a-select-option value="default">默认</a-select-option>
-        <a-select-option value="small">小</a-select-option>
-        <a-select-option value="large">大</a-select-option>
-      </a-select>
     </a-form-item>
     <a-form-item label="显示今天">
       <a-switch v-model:checked="modelValue.$attrs.showToday" />
     </a-form-item>
     <a-form-item label="显示此刻">
       <a-switch v-model:checked="modelValue.$attrs.showNow" />
-    </a-form-item>
-    <a-form-item label="自动获取焦点">
-      <a-switch v-model:checked="modelValue.$attrs.autoFocus" />
-    </a-form-item>
-    <a-form-item label="输入框状态">
-      <a-select v-model:value="modelValue.$attrs.status">
-        <a-select-option value="">无</a-select-option>
-        <a-select-option value="error">错误</a-select-option>
-        <a-select-option value="warning">警告</a-select-option>
-      </a-select>
     </a-form-item>
     <a-form-item label="弹窗类名">
       <a-input v-model:value="modelValue.$attrs.popupClassName" />
@@ -82,11 +75,52 @@
     </a-form-item>
   </div>
 </template>
+
 <script setup>
+import CommonConfig from './CommonConfig.vue';
+
 const props = defineProps({
   modelValue: { type: Object, required: true }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
 if (!props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
-</script> 
+
+// 定义DatePicker组件支持的事件
+const dateEvents = [
+  { key: 'onChange', label: 'change 事件' },
+  { key: 'onOpenChange', label: 'openChange 事件' },
+  { key: 'onPanelChange', label: 'panelChange 事件' },
+  { key: 'onOk', label: 'ok 事件' },
+  { key: 'onFocus', label: 'focus 事件' },
+  { key: 'onBlur', label: 'blur 事件' }
+];
+</script>
+
+<style scoped lang="less">
+:deep(.full-modal) {
+  .ant-modal {
+    max-width: 100%;
+    top: 0;
+    padding-bottom: 0;
+    margin: 0;
+  }
+  .ant-modal-content {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  .ant-modal-body {
+    flex: 1;
+  }
+}
+
+.editor-footer {
+  padding: 10px;
+  text-align: right;
+  border-top: 1px solid #f0f0f0;
+}
+</style> 

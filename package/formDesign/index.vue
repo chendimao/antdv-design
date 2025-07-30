@@ -26,7 +26,7 @@
                     @dragstart="$emit('add-attrs', formData, index)"
                     @click="$emit('handle-list-push', element)"
                   >
-                    <component v-if="element.icon" :is="element.icon" class="component-icon" />
+                    <div v-if="element.icon" class="component-icon" v-html="element.icon"></div>
                     <span>{{ element.text }}</span>
                   </div> 
               </template>
@@ -57,7 +57,7 @@
                     @dragstart="$emit('add-attrs', gridData, index)"
                     @click="$emit('handle-list-push', element)"
                   >
-                    <component v-if="element.icon" :is="element.icon" class="component-icon" />
+                    <div v-if="element.icon" class="component-icon" v-html="element.icon"></div>
                     <span>{{ element.text }}</span>
                   </div> 
               </template>
@@ -114,6 +114,7 @@
               @handleSelectComponent="handleSelectComponent"
               @selectAdded="handleComponentAdded"
               @selectComponent="handleSelectComponent"
+              @onDragChange="onDragChange"
           >
 
           </form-render>
@@ -291,6 +292,17 @@ const methods = ref();
 onMounted(() => {
 })
   
+
+const props = defineProps({
+  config: { type: Object }
+});
+
+
+watch(() => props.config, (val) => {
+  formConfig.value = val;
+}, {deep: true, immediate: true});
+
+
 watch(() => formConfig.value.formData, (val) => {
   console.log(val);
 }, {deep: true});
@@ -305,21 +317,27 @@ watch(() => formConfig.value.currentItem, (val) => {
 function cloneItem(item) {
   // 先创建原始 item 的深拷贝
   const clonedItem = deepCopy(item);
-  // 在拷贝上修改 name 和 id
-  clonedItem.name = clonedItem.id = `${clonedItem.type}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  // 返回修改后的拷贝
-  return clonedItem;
-}
-
-function componentEnd(e){
-  if (e.pullMode) {
-    formConfig.value.currentItem = formConfig.value.formData[e.newIndex];
-    formConfig.value.currentIndex = e.newIndex;
-   // formConfig.value.formData[e.newIndex] = formConfig.value.currentItem;
-    console.log(e,formConfig.value.formData, formConfig.value.currentItem);
+  
+  // 过滤掉不需要的属性
+  const filteredItem = {};
+  for (const key in clonedItem) {
+    if (key !== 'setup' && key !== 'configComponent' && key !== '__v_isRef' && key !== '__v_isShallow' && key !== '__v_isReadonly' && key !== '__v_raw') {
+      filteredItem[key] = clonedItem[key];
+    }
   }
-
+  
+  // 在拷贝上修改 name 和 id
+  filteredItem.name = filteredItem.id = `${filteredItem.type}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  
+  // 确保有默认的 labelAlign 值
+  if (!filteredItem.labelAlign) {
+    filteredItem.labelAlign = 'right';
+  }
+  
+  // 返回修改后的拷贝
+  return filteredItem;
 }
+
 function handleSelectComponent(e, index){
   if (typeof index === 'undefined') {
     index = formConfig.value.formData.findIndex(item => item && item.id === e.id);
@@ -330,10 +348,20 @@ function handleSelectComponent(e, index){
 }
 
 const onDragChange = (event) => {
-  console.log(event)
+  console.log('index.vue: onDragChange 被调用', event);
   if (event.added) {
-    // formConfig.value.currentItem = event.added.element;
-    // formConfig.value.currentIndex = event.added.newIndex;
+    // 获取新添加的元素
+    const addedElement = event.added.element;
+    const addedIndex = event.added.newIndex;
+    
+    // 自动选中新添加的组件
+    formConfig.value.currentItem = addedElement;
+    formConfig.value.currentIndex = addedIndex;
+    
+    // 切换到控件配置标签页
+    menuActiveKey.value = '2';
+    
+    console.log('自动选中新添加的组件:', addedElement, addedIndex);
   }
   if (event.moved) {
 
@@ -367,6 +395,11 @@ const FUNCTION_FLAG = 'FUNCTION_FLAG';
 const convertToEditableString = (obj) => {
   try {
     return JSON.stringify(obj, (key, value) => {
+      // 过滤掉不需要的属性
+      if (key === 'setup' || key === 'configComponent' || key === '__v_isRef' || key === '__v_isShallow' || key === '__v_isReadonly' || key === '__v_raw') {
+        return undefined; // 返回 undefined 会从 JSON 中移除该属性
+      }
+      
       if (typeof value === 'function') {
         const funcStr = value.toString();
         return `${FUNCTION_FLAG}${funcStr}`;
@@ -442,11 +475,14 @@ function handleComponentAdded(element, index) {
   element.id = newId;
   element.name = newId; // 通常 name 也需要唯一
   
-  console.log("index.vue: Regenerated ID for added component", element);
+  // 自动选中新添加的组件
+  formConfig.value.currentItem = element;
+  formConfig.value.currentIndex = index;
   
-  // 调用 handleSelectComponent 方法来选中新添加的组件
-  // handleSelectComponent 会使用带有新 ID 的 element
- // handleSelectComponent(element, index); // 保持传递 index，虽然 handleSelectComponent 可能只用 element
+  // 切换到控件配置标签页
+  menuActiveKey.value = '2';
+  
+  console.log("index.vue: Regenerated ID and selected added component", element);
 }
 
 </script>
@@ -571,6 +607,14 @@ export default {
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      width: 16px;
+      height: 16px;
+      
+      svg {
+        width: 100%;
+        height: 100%;
+        color: currentColor;
+      }
     }
     > span {
       overflow: hidden;

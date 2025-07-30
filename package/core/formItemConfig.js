@@ -35,16 +35,20 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
-
+        disabledType: 'boolean',
         wrapperCol: {  },
         rules:[
         ],
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         $attrs: { },
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="7" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="14" x2="13" y2="14" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -55,14 +59,17 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <text x="12" y="14" text-anchor="middle" font-size="10" fill="currentColor" font-family="Arial">123</text>
+        </svg>`,
         class: '',
     },{
         text: '单选框',
@@ -75,17 +82,24 @@ export const baseComponent  = [
                 { label: '选项1', value: '1' },
                 { label: '选项2', value: '2' }
               ],
+              optionsValueType: "string",
+              defaultValueType: "string",
         },
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="8" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="8" cy="12" r="1" fill="currentColor"/>
+          <line x1="14" y1="10" x2="20" y2="10" stroke="currentColor" stroke-width="2"/>
+          <line x1="14" y1="14" x2="18" y2="14" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -97,14 +111,19 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="7" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="15" x2="13" y2="15" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -116,14 +135,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M7 9L12 14L17 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -135,14 +158,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M9 11L12 8L15 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 8V16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12Z" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -154,10 +181,10 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         }, 
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
@@ -165,7 +192,13 @@ export const baseComponent  = [
             options: [],
             optionsValueType: 'string',
         },
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M7 8L9 6L11 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 14L9 12L11 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
         class: '',
     },
     {
@@ -177,14 +210,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="11" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+          <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
         class: '',
     },
     {
@@ -196,10 +233,10 @@ export const baseComponent  = [
         show: true,
         value: [],
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
@@ -210,6 +247,14 @@ export const baseComponent  = [
             ],
             optionsValueType: 'string',
         },
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="4" height="4" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M6 8L8 10L10 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="8" x2="20" y2="8" stroke="currentColor" stroke-width="2"/>
+          <rect x="3" y="12" width="4" height="4" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M6 14L8 16L10 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <line x1="12" y1="14" x2="20" y2="14" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -221,14 +266,17 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="8" width="18" height="8" rx="4" stroke="currentColor" stroke-width="2" fill="none"/>
+          <text x="12" y="13" text-anchor="middle" font-size="6" fill="currentColor" font-family="Arial">标签</text>
+        </svg>`,
         class: '',
     },
     {
@@ -240,14 +288,19 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+          <circle cx="8" cy="7" r="1" fill="currentColor"/>
+          <circle cx="16" cy="7" r="1" fill="currentColor"/>
+        </svg>`,
         class: '',
     },
     {
@@ -259,14 +312,22 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+          <circle cx="8" cy="7" r="1" fill="currentColor"/>
+          <circle cx="16" cy="7" r="1" fill="currentColor"/>
+          <circle cx="12" cy="16" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="12" y1="14" x2="12" y2="16" stroke="currentColor" stroke-width="2"/>
+          <line x1="12" y1="16" x2="14" y2="16" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -278,14 +339,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+          <text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor" font-family="Arial">2024</text>
+        </svg>`,
         class: '',
     },
     {
@@ -297,14 +362,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+          <text x="12" y="16" text-anchor="middle" font-size="8" fill="currentColor" font-family="Arial">12</text>
+        </svg>`,
         class: '',
     },
     {
@@ -316,14 +385,17 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="10" width="18" height="4" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="3" y="10" width="12" height="4" rx="2" fill="currentColor"/>
+        </svg>`,
         class: '',
     },
     {
@@ -335,14 +407,17 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="12" cy="12" r="3" fill="currentColor"/>
+        </svg>`,
         class: '',
     },
     {
@@ -354,14 +429,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/>
+          <circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
+          <path d="M6 20C6 16.6863 8.68629 14 12 14C15.3137 14 18 16.6863 18 20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>`,
         class: '',
     },
     {
@@ -373,14 +452,20 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="7" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="2"/>
+          <line x1="7" y1="16" x2="13" y2="16" stroke="currentColor" stroke-width="2"/>
+        </svg>`,
         class: '',
     },
     {
@@ -392,14 +477,19 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <text x="12" y="12" text-anchor="middle" font-size="8" fill="currentColor" font-family="Arial">123</text>
+          <text x="12" y="18" text-anchor="middle" font-size="6" fill="currentColor" font-family="Arial">统计</text>
+        </svg>`,
         class: '',
     },
     {
@@ -411,14 +501,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="8" width="18" height="8" rx="4" stroke="currentColor" stroke-width="2" fill="none"/>
+          <text x="12" y="13" text-anchor="middle" font-size="6" fill="currentColor" font-family="Arial">标签</text>
+        </svg>`,
         class: '',
     },
     {
@@ -430,14 +524,18 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         class: '',
     },
     {
@@ -449,35 +547,21 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+          <circle cx="8" cy="12" r="3" fill="currentColor"/>
+        </svg>`,
         class: '',
     },
-    {
-        text: '颜色选择',
-        type: 'colorPicker',
-        name: 'colorPicker',
-        configComponent: colorPickerConfig,
-        span: 24,
-        show: true,
-        value: '',
-        disabled: (data, form, type) => {
-            console.log(data, form, type);
-            return false;
-        },
-        labelCol: { style: { width: '100px' } },
-        wrapperCol: {  },
-        rules:[
-        ],
-
-        class: '',
-    },
+    
    
     {
         text: '步骤条',
@@ -488,14 +572,19 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="6" cy="12" r="2" fill="currentColor"/>
+          <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+          <circle cx="18" cy="12" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         class: '',
     },
     {
@@ -507,14 +596,25 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <line x1="3" y1="10" x2="21" y2="10" stroke="currentColor" stroke-width="2"/>
+          <circle cx="8" cy="7" r="1" fill="currentColor"/>
+          <circle cx="16" cy="7" r="1" fill="currentColor"/>
+          <circle cx="8" cy="14" r="1" fill="currentColor"/>
+          <circle cx="12" cy="14" r="1" fill="currentColor"/>
+          <circle cx="16" cy="14" r="1" fill="currentColor"/>
+          <circle cx="8" cy="18" r="1" fill="currentColor"/>
+          <circle cx="12" cy="18" r="1" fill="currentColor"/>
+        </svg>`,
         class: '',
     },
     {
@@ -526,14 +626,19 @@ export const baseComponent  = [
         show: true,
         value: '',
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 10L12 5L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 5V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
         class: '',
     },
 
@@ -550,6 +655,10 @@ export const gridComponent  = [
         span: 24,
         show: true,
         value: '',
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="3" width="8" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="13" y="3" width="8" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         columns: [
             { span: 12, children: [] },
             { span: 12, children: [] },
@@ -562,6 +671,11 @@ export const gridComponent  = [
         span: 24,
         show: true,
         value: '',
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="5" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="9" y="3" width="5" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="16" y="3" width="5" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         columns: [
             { span: 8, children: [] },
             { span: 8, children: [] },
@@ -574,6 +688,12 @@ export const gridComponent  = [
         span: 24,
         show: true,
         value: '',
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="4" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="7" y="3" width="4" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="12" y="3" width="4" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="17" y="3" width="4" height="18" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         columns: [
             { span: 6, children: [] },
             { span: 6, children: [] },
@@ -587,6 +707,11 @@ export const gridComponent  = [
         name: 'tabs',
         configComponent: tabsConfig,
         span: 24,
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+          <rect x="4" y="4" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2" fill="currentColor"/>
+          <rect x="11" y="4" width="6" height="4" rx="1" stroke="currentColor" stroke-width="2" fill="none"/>
+        </svg>`,
         columns: [
             { title: '标签1', key: '1', children: [] },
             { title: '标签2', key: '2', children: [] },
@@ -600,14 +725,18 @@ export const gridComponent  = [
             tabPosition: 'top',
         },
         disabled: (data, form, type) => {
-            console.log(data, form, type);
+           
             return false;
         },
         labelCol: { style: { width: '100px' } },
+        labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
-
+        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3L12 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M12 3L12 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>`,
         class: '',
     },
 ];

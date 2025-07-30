@@ -1,84 +1,74 @@
 <template>
   <div>
-    <a-form-item label="占位符">
-      <a-input v-model:value="modelValue.$attrs.placeholder" />
+    <!-- 使用通用配置组件 -->
+    <CommonConfig
+      v-model:disabled="modelValue.$attrs.disabled"
+      v-model:disabledType="modelValue.disabledType"
+      v-model:show="modelValue.show"
+      v-model:showType="modelValue.showType"
+      v-model:placeholder="modelValue.$attrs.placeholder"
+      v-model:allowClear="modelValue.$attrs.allowClear"
+      v-model:bordered="modelValue.$attrs.bordered"
+      v-model:size="modelValue.$attrs.size"
+      v-model:status="modelValue.$attrs.status"
+      v-model:autoFocus="modelValue.$attrs.autofocus"
+      :events="cascaderEvents"
+      @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
+      @update:onSelect="(fn) => modelValue.$attrs.onSelect = fn"
+      @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
+      @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
+      @update:onDropdownVisibleChange="(fn) => modelValue.$attrs.onDropdownVisibleChange = fn"
+    />
+
+    <a-form-item label="默认值">
+      <a-input v-model:value="modelValue.value" placeholder="如: ['zhejiang', 'hangzhou', 'xihu']" />
     </a-form-item>
-    <a-form-item label="禁用">
-      <a-switch v-model:checked="modelValue.$attrs.disabled" />
+    <a-form-item label="选项">
+      <a-textarea v-model:value="modelValue.$attrs.options" placeholder="级联选项配置" />
     </a-form-item>
-    <a-form-item label="是否多选">
-      <a-switch v-model:checked="modelValue.$attrs.multiple" />
-    </a-form-item>
-    <a-form-item label="是否可搜索">
+    <a-form-item label="可搜索">
       <a-switch v-model:checked="modelValue.$attrs.showSearch" />
     </a-form-item>
-    <a-form-item label="允许清除">
-      <a-switch v-model:checked="modelValue.$attrs.allowClear" />
+    <a-form-item label="多选">
+      <a-switch v-model:checked="modelValue.$attrs.multiple" />
     </a-form-item>
-    <a-form-item label="边框">
-      <a-switch v-model:checked="modelValue.$attrs.bordered" />
+    <a-form-item label="标签值模式">
+      <a-switch v-model:checked="modelValue.$attrs.labelInValue" />
     </a-form-item>
-    <a-form-item label="尺寸">
-      <a-select v-model:value="modelValue.$attrs.size">
-        <a-select-option value="default">默认</a-select-option>
-        <a-select-option value="small">小</a-select-option>
-        <a-select-option value="large">大</a-select-option>
-      </a-select>
+    <a-form-item label="展开图标">
+      <a-input v-model:value="modelValue.$attrs.expandIcon" />
     </a-form-item>
-    <a-form-item label="自动获取焦点">
-      <a-switch v-model:checked="modelValue.$attrs.autofocus" />
+    <a-form-item label="字段名">
+      <a-input v-model:value="modelValue.$attrs.fieldNames" placeholder="如: { label: 'name', value: 'id', children: 'children' }" />
     </a-form-item>
-    <a-form-item label="显示完整路径">
-      <a-switch v-model:checked="modelValue.$attrs.showAllLevels" />
+    <a-form-item label="最大标签数">
+      <a-input-number v-model:value="modelValue.$attrs.maxTagCount" :min="0" />
     </a-form-item>
-    
-    <a-form-item label="默认值">
-      <a-cascader v-model:value="modelValue.value" :options="modelValue.$attrs.options" :multiple="modelValue.$attrs.multiple" style="width: 100%;" />
-    </a-form-item>
-    <!-- 选项配置 -->
-    <a-form-item label="级联选项">
-      <div class="options-config">
-        <tree-options-editor
-          :option="modelValue.$attrs.options"
-          :modelValue="modelValue"
-          :valueType="modelValue.$attrs.optionsValueType"
-          :depth="1"
-          :maxDepth="0"
-          :maxChildren="0"
-        />
-      </div>
+    <a-form-item label="最大标签文本长度">
+      <a-input-number v-model:value="modelValue.$attrs.maxTagTextLength" :min="0" />
     </a-form-item>
   </div>
 </template>
+
 <script setup>
-import { ref, watch } from 'vue';
-import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
-import TreeOptionsEditor from './_TreeOptionsEditor.vue';
+import CommonConfig from './CommonConfig.vue';
+
 const props = defineProps({
   modelValue: { type: Object, required: true }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
 if (!props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
-if (!Array.isArray(props.modelValue.$attrs.options)) {
-  props.modelValue.$attrs.options = [
-    { label: '节点1', value: '1', children: [] },
-    { label: '节点2', value: '2', children: [] }
-  ];
-}
-if (!props.modelValue.$attrs.optionsValueType) {
-  props.modelValue.$attrs.optionsValueType = 'string';
-}
-// 保证 fieldNames 始终存在
-watch(() => props.modelValue.$attrs, (val) => {
-  if (!val.fieldNames) val.fieldNames = { label: 'label', value: 'value', children: 'children' };
-}, { immediate: true, deep: true });
-</script>
 
-<script>
-export default {
-  components: {
-    TreeOptionsEditor
-  }
-}
+// 定义Cascader组件支持的事件
+const cascaderEvents = [
+  { key: 'onChange', label: 'change 事件' },
+  { key: 'onSelect', label: 'select 事件' },
+  { key: 'onFocus', label: 'focus 事件' },
+  { key: 'onBlur', label: 'blur 事件' },
+  { key: 'onDropdownVisibleChange', label: 'dropdownVisibleChange 事件' }
+];
 </script> 

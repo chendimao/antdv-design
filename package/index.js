@@ -19,5 +19,6 @@ const install = function(Vue, config = undefined) {
 };
 
 export default {
-  install
+  install,
+  aFormDesign
 };

@@ -36,9 +36,17 @@ watch(() => props.formConfig, (data) => {
 
 watch(() => props.currentItem, (data) => {
   current.value = data;
+}, {deep: true, immediate: true })
 
-
-} ,{deep: true, immediate: true })
+// 监听当前组件的 span 值变化
+watch(() => current.value?.span, (newSpan) => {
+  if (newSpan !== undefined && props.formConfig?.currentItem) {
+    // 直接更新 formConfig 中的当前组件
+    props.formConfig.currentItem.span = newSpan;
+    // 触发更新事件
+    emits('update:formConfig', props.formConfig);
+  }
+}, { deep: true })
 
 watch(() => config, (data) => {
   emits('update:formConfig', data.value);

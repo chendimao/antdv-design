@@ -3,9 +3,10 @@
     
     <a-layout-sider v-model:collapsed="comCollapsed" :width="260" :collapsedWidth="0" style="min-height: 800px;" theme="light"  :trigger="null" collapsible>
       <a-collapse v-model:activeKey="comActiveKey" :bordered="false">
-        <a-collapse-panel key="1" header="基础组件">
+        <a-collapse-panel key="1" header="基础组件" >
 
             <draggable
+            style="height: 70vh;overflow-y: auto;"
                 tag="div"
                 v-model="formData"
                 class="component-list"
@@ -27,7 +28,7 @@
                     @click="$emit('handle-list-push', element)"
                   >
                     <div v-if="element.icon" class="component-icon" v-html="element.icon"></div>
-                    <span>{{ element.text }}</span>
+                    <div>{{ element.text }}</div>
                   </div> 
               </template>
             </draggable>
@@ -58,7 +59,7 @@
                     @click="$emit('handle-list-push', element)"
                   >
                     <div v-if="element.icon" class="component-icon" v-html="element.icon"></div>
-                    <span>{{ element.text }}</span>
+                    <div>{{ element.text }}</div>
                   </div> 
               </template>
             </draggable>
@@ -98,7 +99,6 @@
         </button>
       </div>
       <a-form class="aCardFormItem"
-                style="height: 90vh;overflow: auto;"
               :layout="formConfig.layout"
               :model="formConfig.formData"
               labelWrap name="basic" ref="formRef"
@@ -106,7 +106,7 @@
               :wrapper-col="formConfig.wrapperCol"
               :colon="formConfig.attribute.includes('colon')"
               autocomplete="off">
-        <div   style="padding: 5px;margin: 2px; display:block;position:relative">
+        <a-row   style="padding: 5px;margin: 2px; ">
           <form-render
               v-model:formData="formConfig.formData"
               :currentItem="formConfig.currentItem"
@@ -114,12 +114,11 @@
               @handleSelectComponent="handleSelectComponent"
               @selectAdded="handleComponentAdded"
               @selectComponent="handleSelectComponent"
-              @onDragChange="onDragChange"
           >
 
           </form-render>
 
-        </div>
+        </a-row>
 
       </a-form>
     </a-layout-content>
@@ -130,11 +129,27 @@
     />
     <menu-fold-outlined v-else class="trigger" @click="() => (configCollapsed = !configCollapsed)" />
     <a-layout-sider v-model:collapsed="configCollapsed" :width="450" :collapsedWidth="0" style="min-height: 800px;height: 100vh;overflow: hidden;" theme="light"  :trigger="null" collapsible>
-      <a-tabs v-model:activeKey="menuActiveKey" class="form-design-tabs">
+      <a-tabs v-model:activeKey="menuActiveKey">
         <a-tab-pane key="1" tab="表单" style="padding: 5px;">
-          <form-config v-model:formConfig="formConfig" />
+          <a-form :model="formConfig" labelWrap layout="vertical" :labelAlign="'left'" :label-col="{style: {width: '100px'}}" name="basic"   autocomplete="off">
+            <a-form-item label="表单布局">
+              <a-radio-group v-model:value="formConfig.layout" button-style="solid">
+                <a-radio-button value="horizontal">水平</a-radio-button>
+                <a-radio-button value="vertical">垂直</a-radio-button>
+                <a-radio-button value="inline">行内</a-radio-button>
+              </a-radio-group>
+            </a-form-item>
+            <a-form-item label="全局标签宽度">
+                <a-input  v-model:value="formConfig.labelCol.style.width"/>
+
+            </a-form-item>
+            <a-form-item label="表单属性">
+              <a-checkbox-group v-model:value="formConfig.attribute" :options="attributeOption" />
+
+            </a-form-item>
+          </a-form>
         </a-tab-pane>
-        <a-tab-pane key="2" tab="控件" force-render style="padding:5px;">
+        <a-tab-pane key="2" tab="控件" force-render style="padding:5px;height: 90vh;overflow: auto;">
           <form-control
                         :component="formData"
                         v-model:formConfig="formConfig"
@@ -181,7 +196,6 @@
     />
     <a-crud-form ref="formRef"
                    @register="dataForm.register"
-                   :config="formProps"
     ></a-crud-form>
  
 
@@ -234,7 +248,6 @@ import FormControl from "./component/formControl.vue";
 import FormGrid from "./component/formGrid.vue";
 import FormRender from "./component/formRender.vue";
 import codeMirror from "./component/codeMirror.vue";
-import FormConfig from "./component/formConfig.vue";
 import tableData from "../../src/applyManager2/data/table";
 import searchData from "../../src/applyManager2/data/search";
 import retireData from "../../src/applyManager2/data/form";
@@ -250,7 +263,8 @@ const menuActiveKey = ref('1'); //
 const currentIndex = ref(); // 当前选中的组件
 const jsonVisible = ref(false);
 const previewVisible = ref(false);
-const jsonData = ref(); 
+const jsonData = ref();
+const previewData = ref();
 const codeEditorRef = ref();
 const editorValue = ref('');
 
@@ -268,40 +282,48 @@ const formConfig = ref({
   labelCol: { style: {width: '150px'}},
   wrapperCol: {},
   size: 'small',
-  currentItem: {}, 
+  currentItem: {},
   currentIndex: 0,
   attribute: [],
   activeKey: 1,
-  $attrs: {},
-  css: ``,
-  name: 'formconfig',
 });
 
 const crudTableRef = ref();
 const test = ref(123);
 const handleData = ref();
-const currentFormData = ref([]);
-const formProps = computed(() => {
-  console.log(281);
-  return formConfig.value;
-})
 const dataForm = new antdCrud.useForm(
-  formProps.value
+   {
+        title: '表单预览',
+        formData: [], 
+        name: 'bmgl',
+      } 
 ) 
 const methods = ref();
 onMounted(() => {
 })
+
+
+const data = [
+  { id: 1, parentId: null, name: 'CEO' },
+  { id: 2, parentId: 1, name: '技术部' },
+  { id: 3, parentId: 1, name: '市场部' },
+  { id: 4, parentId: 2, name: '前端组' },
+  { id: 5, parentId: 2, name: '后端组' },
+  { id: 6, parentId: 3, name: '推广组' },
+  { id: 7, parentId: 4, name: 'React小组' },
+  { id: 8, parentId: 5, name: 'Java小组' }
+];
+let treeData = [];
+const buildTreeData = (treeData,  parentId = null) => {
+   
+ return treeData.filter(item => item.parentId == parentId).map(item => {
   
-
-const props = defineProps({
-  config: { type: Object }
-});
-
-
-watch(() => props.config, (val) => {
-  formConfig.value = val;
-}, {deep: true, immediate: true});
-
+   return {...item, 
+   children: buildTreeData(treeData, item.id)}
+ })
+}
+ 
+console.log(buildTreeData(data,  null));
 
 watch(() => formConfig.value.formData, (val) => {
   console.log(val);
@@ -317,51 +339,31 @@ watch(() => formConfig.value.currentItem, (val) => {
 function cloneItem(item) {
   // 先创建原始 item 的深拷贝
   const clonedItem = deepCopy(item);
-  
-  // 过滤掉不需要的属性
-  const filteredItem = {};
-  for (const key in clonedItem) {
-    if (key !== 'setup' && key !== 'configComponent' && key !== '__v_isRef' && key !== '__v_isShallow' && key !== '__v_isReadonly' && key !== '__v_raw') {
-      filteredItem[key] = clonedItem[key];
-    }
-  }
-  
   // 在拷贝上修改 name 和 id
-  filteredItem.name = filteredItem.id = `${filteredItem.type}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
-  
-  // 确保有默认的 labelAlign 值
-  if (!filteredItem.labelAlign) {
-    filteredItem.labelAlign = 'right';
-  }
-  
+  clonedItem.name = clonedItem.id = `${clonedItem.type}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
   // 返回修改后的拷贝
-  return filteredItem;
+  return clonedItem;
 }
 
-function handleSelectComponent(e, index){
-  if (typeof index === 'undefined') {
-    index = formConfig.value.formData.findIndex(item => item && item.id === e.id);
+function componentEnd(e){
+  if (e.pullMode) {
+    formConfig.value.currentItem = formConfig.value.formData[e.newIndex];
+    formConfig.value.currentIndex = e.newIndex;
+   // formConfig.value.formData[e.newIndex] = formConfig.value.currentItem;
+    console.log(e,formConfig.value.formData, formConfig.value.currentItem);
   }
-  formConfig.value.currentItem = e;
-  formConfig.value.currentIndex = index;
-  console.log(index, e, 349);
+
+}
+function handleSelectComponent(e, index){
+ formConfig.value.currentItem = e;
+ formConfig.value.currentIndex = index;
 }
 
 const onDragChange = (event) => {
-  console.log('index.vue: onDragChange 被调用', event);
+  console.log(event)
   if (event.added) {
-    // 获取新添加的元素
-    const addedElement = event.added.element;
-    const addedIndex = event.added.newIndex;
-    
-    // 自动选中新添加的组件
-    formConfig.value.currentItem = addedElement;
-    formConfig.value.currentIndex = addedIndex;
-    
-    // 切换到控件配置标签页
-    menuActiveKey.value = '2';
-    
-    console.log('自动选中新添加的组件:', addedElement, addedIndex);
+    // formConfig.value.currentItem = event.added.element;
+    // formConfig.value.currentIndex = event.added.newIndex;
   }
   if (event.moved) {
 
@@ -395,11 +397,6 @@ const FUNCTION_FLAG = 'FUNCTION_FLAG';
 const convertToEditableString = (obj) => {
   try {
     return JSON.stringify(obj, (key, value) => {
-      // 过滤掉不需要的属性
-      if (key === 'setup' || key === 'configComponent' || key === '__v_isRef' || key === '__v_isShallow' || key === '__v_isReadonly' || key === '__v_raw') {
-        return undefined; // 返回 undefined 会从 JSON 中移除该属性
-      }
-      
       if (typeof value === 'function') {
         const funcStr = value.toString();
         return `${FUNCTION_FLAG}${funcStr}`;
@@ -435,10 +432,13 @@ function printConfig() {
   }
 }
 async function formPreview() {
- console.log(formConfig.value, formProps.value, 422); 
-  console.log( formConfig.value.currentItem);
-   
-  dataForm.methods.value.handleFormShow('preview');
+
+  
+  previewData.value =formConfig.value.formData;
+  console.log(previewData.value, formConfig.value.currentItem);
+  
+  dataForm.methods.value.setFormData(previewData.value);
+  dataForm.methods.value.handleFormShow('update');
 
 }
 
@@ -475,14 +475,11 @@ function handleComponentAdded(element, index) {
   element.id = newId;
   element.name = newId; // 通常 name 也需要唯一
   
-  // 自动选中新添加的组件
-  formConfig.value.currentItem = element;
-  formConfig.value.currentIndex = index;
+  console.log("index.vue: Regenerated ID for added component", element);
   
-  // 切换到控件配置标签页
-  menuActiveKey.value = '2';
-  
-  console.log("index.vue: Regenerated ID and selected added component", element);
+  // 调用 handleSelectComponent 方法来选中新添加的组件
+  // handleSelectComponent 会使用带有新 ID 的 element
+  handleSelectComponent(element, index); // 保持传递 index，虽然 handleSelectComponent 可能只用 element
 }
 
 </script>
@@ -546,32 +543,7 @@ export default {
     background: #f8f9fb;
     border-radius: 8px;
     min-height: 40px;
-    max-height: 70vh;
-    overflow-y: auto;
-    
-    // 自定义滚动条样式
-    &::-webkit-scrollbar {
-      width: 8px;
-      background: transparent;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #e5e6eb;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: #b2bcd1;
-    }
-    &::-webkit-scrollbar-corner {
-      background: transparent;
-    }
-
-    // Firefox
-    scrollbar-width: thin;
-    scrollbar-color: #e5e6eb #f8f9fb;
   }
-  // 让 a-collapse-panel 外层有滚动条
- 
 
   .selectComponent {
     width: 110px;
@@ -583,7 +555,7 @@ export default {
     border-radius: 8px;
     background: #fff;
     transition: all 0.2s;
-    font-size: 15px;
+    font-size: 13px;
     color: #333;
     margin-bottom: 4px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.03);
@@ -607,13 +579,13 @@ export default {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 16px;
-      height: 16px;
       
+      // SVG 图标样式
       svg {
-        width: 100%;
-        height: 100%;
-        color: currentColor;
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+        stroke: currentColor;
       }
     }
     > span {
@@ -644,6 +616,7 @@ export default {
   // 分组内容 padding 并居中内容
   :deep(.ant-collapse-content-box) {
     padding: 0 0 8px 0;
+   
     text-align: center;
   }
 
@@ -694,36 +667,11 @@ export default {
     }
   }
  
- 
-}
 
 
 }
+}
 
 
 
-</style>
-
-<style lang="less">
-// 全局滚动条美化
-::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #e5e6eb;
-  border-radius: 6px;
-  transition: background 0.2s;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #b2bcd1;
-}
-::-webkit-scrollbar-corner {
-  background: transparent;
-}
-// Firefox
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #e5e6eb #f8f9fb;
-}
 </style>

@@ -1,63 +1,114 @@
-# CommonConfig 通用配置组件
+# CommonConfig.vue 组件文档
 
 ## 概述
 
-`CommonConfig.vue` 是一个通用的表单组件配置组件，用于统一管理所有表单组件的公共配置项，包括禁用、显示、通用属性和事件处理等功能。
+`CommonConfig.vue` 是一个通用的表单组件配置组件，用于统一管理各种表单组件的公共配置项，包括禁用状态、显示控制、通用属性、事件处理和校验规则。
 
 ## 功能特性
 
-### 1. 禁用配置 (Disabled)
+### 1. 禁用配置 (disabled)
 - 支持布尔值开关
-- 支持函数动态判断
-- 提供函数编辑器
+- 支持动态函数配置
+- 可切换配置类型
 
-### 2. 显示配置 (Show)
+### 2. 显示配置 (show)
 - 支持布尔值开关
-- 支持函数动态判断
-- 提供函数编辑器
+- 支持动态函数配置
+- 可切换配置类型
 
-### 3. 通用属性配置
-- **占位符** (placeholder)
-- **允许清除** (allowClear)
-- **边框** (bordered)
-- **尺寸** (size) - 默认/小/大
-- **状态** (status) - 无/错误/警告
-- **自动获取焦点** (autoFocus)
+### 3. 校验规则配置 (rules)
+- 支持必填规则配置
+- 支持自定义校验函数
+- 可视化规则管理界面
+- 自动限制只能有一个必填规则
+- 支持多种触发方式（blur、change、submit）
 
-### 4. 事件处理配置
-- 支持组件特定的事件列表
-- 提供全屏代码编辑器
-- 支持多标签页编辑
-- 自动函数转换和验证
+### 4. 通用属性配置
+- 占位符 (placeholder)
+- 允许清除 (allowClear)
+- 边框样式 (bordered)
+- 尺寸大小 (size)
+- 状态样式 (status)
+- 自动聚焦 (autoFocus)
 
-## 使用方法
+### 5. 事件处理配置
+- 动态事件列表支持
+- 代码编辑器集成
+- 函数转换和保存
 
-### 基本用法
+## Props
+
+```javascript
+const props = defineProps({
+  // 禁用相关
+  disabled: [Boolean, Function],
+  disabledType: { type: String, default: 'boolean' },
+  
+  // 显示相关
+  show: [Boolean, Function],
+  showType: { type: String, default: 'boolean' },
+  
+  // 校验规则
+  rules: { type: Array, default: () => [] },
+  
+  // 通用属性
+  placeholder: String,
+  allowClear: Boolean,
+  bordered: Boolean,
+  size: String,
+  status: String,
+  autoFocus: Boolean,
+  
+  // 显示控制
+  showPlaceholder: { type: Boolean, default: true },
+  showAllowClear: { type: Boolean, default: true },
+  showBordered: { type: Boolean, default: true },
+  showSize: { type: Boolean, default: true },
+  showStatus: { type: Boolean, default: true },
+  showAutoFocus: { type: Boolean, default: true },
+  showEvents: { type: Boolean, default: true },
+  
+  // 事件列表
+  events: { type: Array, default: () => [] }
+});
+```
+
+## Events
+
+```javascript
+const emit = defineEmits([
+  'update:disabled', 'update:disabledType', 
+  'update:show', 'update:showType',
+  'update:rules',
+  'update:placeholder', 'update:allowClear', 'update:bordered', 
+  'update:size', 'update:status', 'update:autoFocus'
+  // 动态事件 emits 如 'update:onChange', 'update:onFocus' 等
+]);
+```
+
+## 使用示例
+
+### 基础用法
 
 ```vue
 <template>
   <CommonConfig
-    v-model:disabled="modelValue.$attrs.disabled"
+    v-model:disabled="modelValue.disabled"
     v-model:disabledType="modelValue.disabledType"
     v-model:show="modelValue.show"
     v-model:showType="modelValue.showType"
     v-model:placeholder="modelValue.$attrs.placeholder"
-    v-model:allowClear="modelValue.$attrs.allowClear"
-    v-model:bordered="modelValue.$attrs.bordered"
     v-model:size="modelValue.$attrs.size"
-    v-model:status="modelValue.$attrs.status"
-    v-model:autoFocus="modelValue.$attrs.autofocus"
+    v-model:rules="modelValue.rules"
     :events="componentEvents"
     @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
     @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
-    @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
   />
 </template>
 
 <script setup>
 import CommonConfig from './CommonConfig.vue';
 
-// 定义组件支持的事件
 const componentEvents = [
   { key: 'onChange', label: 'change 事件' },
   { key: 'onFocus', label: 'focus 事件' },
@@ -66,141 +117,126 @@ const componentEvents = [
 </script>
 ```
 
-### 属性说明
+### 校验规则配置示例
 
-#### Props
-
-| 属性名 | 类型 | 默认值 | 说明 |
-|--------|------|--------|------|
-| disabled | Boolean/Function | - | 禁用状态 |
-| disabledType | String | 'boolean' | 禁用类型：'boolean' 或 'function' |
-| show | Boolean/Function | - | 显示状态 |
-| showType | String | 'boolean' | 显示类型：'boolean' 或 'function' |
-| placeholder | String | - | 占位符 |
-| allowClear | Boolean | - | 允许清除 |
-| bordered | Boolean | - | 边框 |
-| size | String | - | 尺寸：'default'/'small'/'large' |
-| status | String | - | 状态：''/'error'/'warning' |
-| autoFocus | Boolean | - | 自动获取焦点 |
-| showPlaceholder | Boolean | true | 是否显示占位符配置 |
-| showAllowClear | Boolean | true | 是否显示允许清除配置 |
-| showBordered | Boolean | true | 是否显示边框配置 |
-| showSize | Boolean | true | 是否显示尺寸配置 |
-| showStatus | Boolean | true | 是否显示状态配置 |
-| showAutoFocus | Boolean | true | 是否显示自动获取焦点配置 |
-| showEvents | Boolean | true | 是否显示事件处理配置 |
-| events | Array | [] | 事件列表配置 |
-
-#### Events
-
-| 事件名 | 参数 | 说明 |
-|--------|------|------|
-| update:disabled | (value) | 禁用状态更新 |
-| update:disabledType | (value) | 禁用类型更新 |
-| update:show | (value) | 显示状态更新 |
-| update:showType | (value) | 显示类型更新 |
-| update:placeholder | (value) | 占位符更新 |
-| update:allowClear | (value) | 允许清除更新 |
-| update:bordered | (value) | 边框更新 |
-| update:size | (value) | 尺寸更新 |
-| update:status | (value) | 状态更新 |
-| update:autoFocus | (value) | 自动获取焦点更新 |
-| update:onChange | (fn) | onChange事件更新 |
-| update:onFocus | (fn) | onFocus事件更新 |
-| update:onBlur | (fn) | onBlur事件更新 |
-| ... | ... | 其他事件更新 |
+```javascript
+// 生成的校验规则格式
+const rules = [
+  { 
+    required: true, 
+    message: '请输入单位名称'
+  },
+  { 
+    validator: (rule, value, callback) => {
+      if (value && value.length < 3) {
+        callback('长度不能少于3个字符');
+      } else {
+        callback();
+      }
+    }, 
+    trigger: 'blur'
+  }
+];
+```
 
 ## 已集成的组件
 
-以下组件已经集成了 `CommonConfig`：
+以下组件已成功集成 `CommonConfig.vue`：
 
-### 基础组件
-- ✅ `inputConfig.vue` - 输入框配置
-- ✅ `selectConfig.vue` - 选择器配置
-- ✅ `textareaConfig.vue` - 文本域配置
-- ✅ `numberConfig.vue` - 数字输入框配置
-- ✅ `radioConfig.vue` - 单选框配置
-- ✅ `checkboxConfig.vue` - 复选框配置
-- ✅ `switchConfig.vue` - 开关配置
+1. `inputConfig.vue` - 输入框配置
+2. `selectConfig.vue` - 选择器配置
+3. `textareaConfig.vue` - 文本域配置
+4. `radioConfig.vue` - 单选框配置
+5. `checkboxConfig.vue` - 复选框配置
+6. `switchConfig.vue` - 开关配置
+7. `dateConfig.vue` - 日期选择器配置
+8. `timeConfig.vue` - 时间选择器配置
+9. `datetimeConfig.vue` - 日期时间选择器配置
+10. `yearConfig.vue` - 年份选择器配置
+11. `monthConfig.vue` - 月份选择器配置
+12. `uploadConfig.vue` - 上传组件配置
+13. `sliderConfig.vue` - 滑块配置
+14. `rateConfig.vue` - 评分配置
+15. `colorPickerConfig.vue` - 颜色选择器配置
+16. `autoCompleteConfig.vue` - 自动完成配置
+17. `cascaderConfig.vue` - 级联选择器配置
+18. `treeSelectConfig.vue` - 树选择器配置
+19. `avatarConfig.vue` - 头像配置
+20. `badgeConfig.vue` - 徽标配置
+21. `descriptionsConfig.vue` - 描述列表配置
+22. `progressConfig.vue` - 进度条配置
+23. `statisticConfig.vue` - 统计数值配置
+24. `stepsConfig.vue` - 步骤条配置
+25. `tagConfig.vue` - 标签配置
+26. `tabsConfig.vue` - 标签页配置
+27. `calendarConfig.vue` - 日历配置
+28. `numberConfig.vue` - 数字输入框配置
 
-### 日期时间组件
-- ✅ `dateConfig.vue` - 日期选择器配置
-- ✅ `timeConfig.vue` - 时间选择器配置
-- ✅ `datetimeConfig.vue` - 日期时间选择器配置
-- ✅ `yearConfig.vue` - 年份选择器配置
-- ✅ `monthConfig.vue` - 月份选择器配置
-- ✅ `daterangeConfig.vue` - 日期范围选择器配置
+## 校验规则配置详解
 
-### 高级组件
-- ✅ `uploadConfig.vue` - 上传组件配置
-- ✅ `sliderConfig.vue` - 滑块配置
-- ✅ `rateConfig.vue` - 评分配置
-- ✅ `colorPickerConfig.vue` - 颜色选择器配置
-- ✅ `autoCompleteConfig.vue` - 自动完成配置
-- ✅ `cascaderConfig.vue` - 级联选择器配置
-- ✅ `treeSelectConfig.vue` - 树形选择器配置
+### 规则类型
 
-### 展示组件
-- ✅ `avatarConfig.vue` - 头像配置
-- ✅ `badgeConfig.vue` - 徽标配置
-- ✅ `descriptionsConfig.vue` - 描述列表配置
-- ✅ `progressConfig.vue` - 进度条配置
-- ✅ `statisticConfig.vue` - 统计数值配置
-- ✅ `stepsConfig.vue` - 步骤条配置
-- ✅ `tagConfig.vue` - 标签配置
-- ✅ `tabsConfig.vue` - 标签页配置
+1. **必填规则 (required)**
+   - 只能存在一个必填规则
+   - 可自定义提示信息
+   - 自动转换为 `{ required: true, message: '提示信息' }`
 
-## 事件配置示例
+2. **自定义函数规则 (custom)**
+   - 支持多种触发方式：blur、change、submit
+   - 使用代码编辑器编写校验函数
+   - 自动转换为 `{ validator: function, trigger: 'blur' }`
 
-### Input 组件事件
+### 校验函数格式
+
 ```javascript
-const inputEvents = [
-  { key: 'onChange', label: 'change 事件' },
-  { key: 'onInput', label: 'input 事件' },
-  { key: 'onFocus', label: 'focus 事件' },
-  { key: 'onBlur', label: 'blur 事件' },
-  { key: 'onPressEnter', label: 'pressEnter 事件' },
-  { key: 'onKeydown', label: 'keydown 事件' }
-];
+// Promise 格式（推荐）
+(data) => {
+  const {cardForm, refs} = data;
+  return new Promise((resolve, reject) => {
+    if (cardForm.value.formState.describe !== 'test') {
+      resolve();
+    } else {
+      reject('不能输入test');
+    }
+  });
+}
+
+// 传统 callback 格式（兼容）
+function(rule, value, callback) {
+  if (!value) {
+    callback('请输入内容');
+  } else if (value.length < 3) {
+    callback('长度不能少于3个字符');
+  } else {
+    callback();
+  }
+}
 ```
 
-### Select 组件事件
-```javascript
-const selectEvents = [
-  { key: 'onChange', label: 'change 事件' },
-  { key: 'onSelect', label: 'select 事件' },
-  { key: 'onDeselect', label: 'deselect 事件' },
-  { key: 'onFocus', label: 'focus 事件' },
-  { key: 'onBlur', label: 'blur 事件' },
-  { key: 'onSearch', label: 'search 事件' },
-  { key: 'onDropdownVisibleChange', label: 'dropdownVisibleChange 事件' }
-];
-```
+### 触发方式说明
 
-### DatePicker 组件事件
-```javascript
-const dateEvents = [
-  { key: 'onChange', label: 'change 事件' },
-  { key: 'onOpenChange', label: 'openChange 事件' },
-  { key: 'onPanelChange', label: 'panelChange 事件' },
-  { key: 'onOk', label: 'ok 事件' },
-  { key: 'onFocus', label: 'focus 事件' },
-  { key: 'onBlur', label: 'blur 事件' }
-];
-```
+- **blur**: 失去焦点时触发校验
+- **change**: 值改变时触发校验
+- **submit**: 表单提交时触发校验
 
-## 优势
+### 校验函数参数说明
 
-1. **代码复用**：避免在每个组件中重复编写相同的配置项
-2. **统一管理**：所有组件的公共配置项集中管理
-3. **易于维护**：修改公共配置只需要在一个地方进行
-4. **功能完整**：支持禁用、显示、通用属性和事件处理等完整功能
-5. **灵活配置**：可以通过props控制显示哪些配置项
-6. **事件支持**：支持组件特定的事件列表配置
+#### Promise 格式
+- **data**: 包含表单数据和引用的对象
+  - `cardForm`: 表单数据对象
+  - `refs`: 组件引用对象
+- **resolve()**: 调用表示校验通过
+- **reject('错误信息')**: 调用表示校验失败
+
+#### 传统格式
+- **rule**: 校验规则对象
+- **value**: 当前字段值
+- **callback(error)**: 回调函数，传入错误信息表示校验失败，不传参数表示校验通过
 
 ## 注意事项
 
-1. 使用前需要确保 `modelValue.$attrs` 对象存在
-2. 事件列表需要根据具体组件的API文档来定义
-3. 函数类型的配置项会自动处理函数转换和验证
-4. 所有配置项都支持双向绑定 
+1. 校验规则中的必填规则只能存在一个，添加新的必填规则会自动将原有的必填规则转换为自定义规则
+2. 自定义校验函数必须调用 `callback()` 来结束校验
+3. 事件处理函数支持动态添加，通过 `events` 数组配置
+4. 所有配置项都支持双向绑定，使用 `v-model:` 语法
+5. 函数类型的配置项会自动转换为字符串进行编辑，保存时再转换回函数对象 

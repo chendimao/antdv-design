@@ -4,7 +4,7 @@
   
     <draggable
       tag="div"
-      class="form-draggable"
+      class="  form-draggable"
       :class="{ 'is-layout': isChildren }"
       v-model="_formData"
       @change="onDragChange"
@@ -26,7 +26,9 @@
   
  
       <template #item="{element,index}">
-        <div class="dragging" :class="{ 'is-hidden': isElementHidden(element) }" style="width:100%;position:relative;">
+        <div class="dragging" :style="{
+            width: `${(element.span / 24) * 100}%`,
+          }"  :class="{ 'is-hidden': isElementHidden(element) }" style="position:relative;">
           <template v-if="isElementHidden(element)">
             <div class="hidden-label">已隐藏</div>
           </template>
@@ -200,7 +202,9 @@ console.log(_formData, 169);
 
 const onDragChange = (event) => {
   console.log('formRender: onDragChange', event);
-  // if (event.added) {
+   if (event.added) {
+    _currentIndex.value = event.added.newIndex;
+    _currentItem.value = _formData.value[event.added.newIndex];
   //   console.log('formRender: Added element', event.added);
     
   //   // 获取新添加的元素引用
@@ -214,7 +218,7 @@ const onDragChange = (event) => {
     
   //   // 触发 selectAdded 事件，传递新添加的元素和它的索引
   //   emits('selectAdded', addedElement, event.added.newIndex);
-  // }
+   }
   // 如果需要在拖动结束后也触发父组件的 onDragChange 事件，可以取消注释下面这行
   emits('onDragChange',event)
 };
@@ -273,11 +277,14 @@ export default {
 }
 
 .form-draggable { 
-    display: block !important;
-  min-height: 90vh;
   width: 100%;
+  min-height: 90vh; /* 设置固定高度 */
   padding: 4px;
-  gap: 8px;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start !important;
+  align-content: flex-start;
+  /* 移除 justify-content，让元素紧密排列 */
 }
 
 .is-layout {
@@ -319,6 +326,7 @@ export default {
   position: relative;
   transition: all 0.2s;
   cursor: pointer;
+  flex-shrink: 0;
   
   .grid-row {
     padding: 4px;
@@ -340,6 +348,7 @@ export default {
 
 .form-field {
   position: relative;
+  flex-shrink: 0;
   
   .field-container {
     border: 1px dashed #8c8c8c;  // 更深的边框颜色
@@ -549,6 +558,8 @@ export default {
 .dragging {
   opacity: 0.8;
   background: #fafafa;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 .drag-ghost {
   background: #e6f7ff !important;

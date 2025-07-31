@@ -9,8 +9,8 @@ import 'vxe-table/lib/style.css';
 import 'antdv-crud/dist/style.css';
 
  //import antdDesign from '../dist/antdv-design.es.js';
-import antdDesign from '../package/index.js';
-import '../dist/style.css';
+ //import '../dist/style.css';
+ import antdDesign from '../package/index.js';
 import router from './router/index';
 
 // ...可选 UI

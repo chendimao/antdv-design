@@ -42,6 +42,130 @@
       </template>
     </a-form-item>
 
+    <!-- 校验规则配置 -->
+    <a-form-item label="校验规则">
+      <a-button @click="showRulesEditor = true" type="primary" size="small">配置校验规则</a-button>
+    </a-form-item>
+
+    <!-- 校验规则配置弹窗 -->
+    <a-modal
+      v-model:visible="showRulesEditor"
+      title="校验规则配置"
+      width="800px"
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <div class="rules-editor">
+        <div class="rules-header">
+          <a-button type="primary" @click="addRule" size="small">
+            <template #icon><PlusOutlined /></template>
+            添加规则
+          </a-button>
+        </div>
+        
+        <div class="rules-list">
+          <div v-for="(rule, index) in localRules" :key="index" class="rule-item">
+            <div class="rule-header">
+              <span class="rule-title">规则 {{ index + 1 }}</span>
+              <a-button type="text" danger @click="removeRule(index)" size="small">
+                <template #icon><DeleteOutlined /></template>
+              </a-button>
+            </div>
+            
+            <div class="rule-content">
+              <!-- 规则类型选择 -->
+              <a-form-item label="规则类型">
+                <a-radio-group v-model:value="rule.type" @change="onRuleTypeChange(index)">
+                  <a-radio value="required">必填</a-radio>
+                  <a-radio value="custom">自定义函数</a-radio>
+                </a-radio-group>
+              </a-form-item>
+              
+              <!-- 必填规则配置 -->
+              <template v-if="rule.type === 'required'">
+                <a-form-item label="提示信息">
+                  <a-input v-model:value="rule.message" placeholder="请输入必填提示信息" />
+                </a-form-item>
+              </template>
+              
+              <!-- 自定义函数规则配置 -->
+              <template v-if="rule.type === 'custom'">
+                <a-form-item label="触发方式">
+                  <a-select v-model:value="rule.trigger" placeholder="选择触发方式">
+                    <a-select-option value="blur">失去焦点</a-select-option>
+                    <a-select-option value="change">值改变</a-select-option>
+                    <a-select-option value="submit">提交时</a-select-option>
+                  </a-select>
+                </a-form-item>
+                <a-form-item label="校验函数">
+                  <a-button @click="editCustomRule(index)" type="primary" size="small">编辑函数</a-button>
+                </a-form-item>
+              </template>
+            </div>
+          </div>
+          
+          <div v-if="localRules.length === 0" class="empty-rules">
+            <a-empty description="暂无校验规则，点击上方按钮添加" />
+          </div>
+        </div>
+        
+        <div class="rules-footer">
+          <a-button @click="showRulesEditor = false">取消</a-button>
+          <a-button type="primary" @click="saveRules" style="margin-left: 8px;">保存</a-button>
+        </div>
+      </div>
+    </a-modal>
+
+    <!-- 自定义校验函数编辑器 -->
+    <a-modal
+      v-model:visible="showCustomRuleEditor"
+      title="编辑自定义校验函数"
+      width="800px"
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <div class="validator-editor">
+        <div class="editor-header">
+          <p class="editor-tip">
+            校验函数格式：<code>(data) => { return new Promise((resolve, reject) => { ... }) }</code><br>
+            使用 <code>resolve()</code> 表示校验通过，使用 <code>reject('错误信息')</code> 返回错误
+          </p>
+        </div>
+        
+        <div class="editor-content">
+          <code-mirror
+            v-model:value="customRuleCode"
+            :language="'javascript'"
+            :height="'300px'"
+            :width="'100%'"
+            :showFooter="false"
+            :showCheckSyntax="true"
+            placeholder="(data) => {
+  const {cardForm, refs} = data;
+  return new Promise((resolve, reject) => {
+    
+  });
+}"
+            :options="{ 
+              theme: 'monokai',
+              lineNumbers: true,
+              lineWrapping: true,
+              tabSize: 2,
+              indentUnit: 2,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              styleActiveLine: true
+            }"
+          />
+        </div>
+        
+        <div class="editor-footer">
+          <a-button @click="cancelCustomRuleEdit">取消</a-button>
+          <a-button type="primary" @click="saveCustomRule" style="margin-left: 8px;">保存</a-button>
+        </div>
+      </div>
+    </a-modal>
+
     <!-- 通用属性配置 -->
     <a-form-item label="占位符" v-if="showPlaceholder">
       <a-input v-model:value="localPlaceholder" />
@@ -124,6 +248,7 @@
 
 <script setup>
 import { ref, watch, watchEffect, computed } from 'vue';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons-vue';
 import FunctionEditorModal from '../../component/FunctionEditorModal.vue';
 import codeMirror from '../../component/codeMirror.vue';
 import { message } from 'ant-design-vue';
@@ -136,6 +261,9 @@ const props = defineProps({
   // 显示相关
   show: [Boolean, Function],
   showType: { type: String, default: 'boolean' },
+  
+  // 校验规则
+  rules: { type: Array, default: () => [] },
   
   // 通用属性
   placeholder: String,
@@ -161,6 +289,7 @@ const props = defineProps({
 const emit = defineEmits([
   'update:disabled', 'update:disabledType', 
   'update:show', 'update:showType',
+  'update:rules',
   'update:placeholder', 'update:allowClear', 'update:bordered', 
   'update:size', 'update:status', 'update:autoFocus'
 ]);
@@ -176,6 +305,13 @@ const localShow = ref(props.show);
 const localShowType = ref(props.showType);
 const showShowEditor = ref(false);
 const showFuncCode = ref('return true;');
+
+// 校验规则相关
+const localRules = ref([]);
+const showRulesEditor = ref(false);
+const showCustomRuleEditor = ref(false);
+const customRuleCode = ref('');
+const editingRuleIndex = ref(-1);
 
 // 通用属性
 const localPlaceholder = ref(props.placeholder);
@@ -210,11 +346,47 @@ watchEffect(() => {
   originalEventCodeMap.value = { ...events };
 });
 
+// 初始化校验规则
+watchEffect(() => {
+  localRules.value = props.rules.map(rule => {
+    if (rule.required) {
+      return {
+        type: 'required',
+        message: rule.message || '此项为必填项'
+      };
+    } else if (rule.validator) {
+      return {
+        type: 'custom',
+        trigger: rule.trigger || 'blur',
+        validator: rule.validator
+      };
+    }
+    return rule;
+  });
+});
+
 // 监听props变化
 watch(() => props.disabled, v => { localDisabled.value = v; });
 watch(() => props.disabledType, v => { localDisabledType.value = v; });
 watch(() => props.show, v => { localShow.value = v; });
 watch(() => props.showType, v => { localShowType.value = v; });
+watch(() => props.rules, v => { 
+  localRules.value = v.map(rule => {
+    if (rule.required) {
+      return {
+        type: 'required',
+        message: rule.message || '此项为必填项'
+      };
+    } else if (rule.validator) {
+      return {
+        type: 'custom',
+        trigger: rule.trigger || 'blur',
+        validator: rule.validator
+      };
+    }
+    return rule;
+  });
+});
 watch(() => props.placeholder, v => { localPlaceholder.value = v; });
 watch(() => props.allowClear, v => { localAllowClear.value = v; });
 watch(() => props.bordered, v => { localBordered.value = v; });
@@ -229,7 +401,6 @@ watch(localShow, v => { emit('update:show', v); });
 watch(localShowType, v => { emit('update:showType', v); });
 watch(localPlaceholder, v => { emit('update:placeholder', v); });
 watch(localAllowClear, v => { emit('update:allowClear', v); });
-watch(localBordered, v => { emit('update:bordered', v); });
 watch(localSize, v => { emit('update:size', v); });
 watch(localStatus, v => { emit('update:status', v); });
 watch(localAutoFocus, v => { emit('update:autoFocus', v); });
@@ -275,6 +446,92 @@ watch(localShowType, (newType) => {
 function onShowFuncSave(fn) {
   localShow.value = fn;
 }
+
+// 校验规则相关
+const addRule = () => {
+  // 检查是否已存在必填规则
+  const hasRequired = localRules.value.some(rule => rule.type === 'required');
+  
+  localRules.value.push({
+    type: hasRequired ? 'custom' : 'required',
+    message: hasRequired ? '' : '此项为必填项',
+    trigger: 'blur',
+    validator: null
+  });
+};
+
+const removeRule = (index) => {
+  localRules.value.splice(index, 1);
+};
+
+const onRuleTypeChange = (index) => {
+  const rule = localRules.value[index];
+  
+  if (rule.type === 'required') {
+    // 检查是否已存在必填规则
+    const existingRequiredIndex = localRules.value.findIndex((r, i) => i !== index && r.type === 'required');
+    if (existingRequiredIndex !== -1) {
+      // 将已存在的必填规则改为自定义规则
+      localRules.value[existingRequiredIndex] = {
+        type: 'custom',
+        trigger: 'blur',
+        validator: null
+      };
+    }
+    rule.message = '此项为必填项';
+  } else if (rule.type === 'custom') {
+    rule.trigger = 'blur';
+    rule.validator = null;
+  }
+};
+
+const editCustomRule = (index) => {
+  editingRuleIndex.value = index;
+  const rule = localRules.value[index];
+  
+  if (rule.validator && typeof rule.validator === 'function') {
+    const fnStr = rule.validator.toString();
+    // 提取函数体，适配 Promise 格式的校验函数
+    const body = fnStr.replace(/^\([^)]*\)\s*=>\s*{([\s\S]*)}$/, '$1').trim();
+    customRuleCode.value = body;
+  } else {
+    customRuleCode.value = `(data) => {
+  const {cardForm, refs} = data;
+  return new Promise((resolve, reject) => {
+    
+  });
+}`;
+  }
+  
+  showCustomRuleEditor.value = true;
+};
+
+const saveRules = () => {
+  try {
+    // 转换为标准的 rules 格式
+    const standardRules = localRules.value.map(rule => {
+      if (rule.type === 'required') {
+        return {
+          required: true,
+          message: rule.message
+        };
+      } else if (rule.type === 'custom' && rule.validator) {
+        return {
+          validator: rule.validator,
+          trigger: rule.trigger
+        };
+      }
+      return null;
+    }).filter(rule => rule !== null);
+    
+    emit('update:rules', standardRules);
+    showRulesEditor.value = false;
+    message.success('校验规则保存成功');
+  } catch (e) {
+    console.error('校验规则保存错误:', e);
+    message.error('校验规则保存失败');
+  }
+};
 
 // 事件处理相关
 const showEventCodeEditor = () => {
@@ -326,6 +583,36 @@ const cancelEdit = () => {
   eventCodeMap.value = JSON.parse(JSON.stringify(originalEventCodeMap.value));
   eventEditorVisible.value = false;
 };
+
+const cancelCustomRuleEdit = () => {
+  showCustomRuleEditor.value = false;
+  customRuleCode.value = '';
+};
+
+const saveCustomRule = () => {
+  if (editingRuleIndex.value >= 0) {
+    try {
+      // 创建 Promise 格式的校验函数
+      const validatorFn = (data) => {
+        try {
+          // 将代码包装成完整的函数
+          const fullCode = `(${customRuleCode.value})`;
+          const func = eval(fullCode);
+          return func(data);
+        } catch (error) {
+          return Promise.reject(error.message || '校验失败');
+        }
+      };
+      
+      localRules.value[editingRuleIndex.value].validator = validatorFn;
+      editingRuleIndex.value = -1;
+      showCustomRuleEditor.value = false;
+      message.success('自定义校验函数保存成功');
+    } catch (error) {
+      message.error(`函数语法错误: ${error.message}`);
+    }
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -350,5 +637,89 @@ const cancelEdit = () => {
   padding: 10px;
   text-align: right;
   border-top: 1px solid #f0f0f0;
+}
+
+.rules-editor {
+  .rules-header {
+    margin-bottom: 16px;
+    text-align: right;
+  }
+  
+  .rules-list {
+    max-height: 400px;
+    overflow-y: auto;
+    
+    .rule-item {
+      border: 1px solid #d9d9d9;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      padding: 12px;
+      
+      .rule-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+        
+        .rule-title {
+          font-weight: 500;
+          color: #1890ff;
+        }
+      }
+      
+      .rule-content {
+        .ant-form-item {
+          margin-bottom: 8px;
+        }
+      }
+    }
+    
+    .empty-rules {
+      text-align: center;
+      padding: 40px 0;
+    }
+  }
+  
+  .rules-footer {
+    margin-top: 16px;
+    text-align: right;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
+}
+
+.validator-editor {
+  .editor-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    .editor-tip {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .editor-content {
+    height: 300px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .editor-footer {
+    margin-top: 16px;
+    text-align: right;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
 }
 </style> 

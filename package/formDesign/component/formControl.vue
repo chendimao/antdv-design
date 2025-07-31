@@ -1,13 +1,7 @@
 <template>
  <div  >
    <a-form :model="config" v-if="current?.name"   layout="vertical" :labelAlign="'left'" :label-col="{style: {width: '100px'}}" name="basic"   autocomplete="off">
-     <a-form-item label="控件" v-if="current?.type != 'grid'">
-       <a-select v-model:value="current.type" @change="handleChangeCom" >
-         <a-select-option v-for="(item, index) in component" :key="index" :value="item.type" >
-           {{item.text}}
-         </a-select-option>
-       </a-select>
-     </a-form-item>
+     
      <a-form-item label="字段标识">
        <a-input :disabled="true"  v-model:value="current.id"/>
      </a-form-item>
@@ -421,22 +415,7 @@ const configComponentMap = {
     align-items: center;
     margin-bottom: 8px;
   }
-  // 自定义滚动条样式
-  &::-webkit-scrollbar {
-    width: 8px;
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #e5e6eb;
-    border-radius: 6px;
-    transition: background 0.2s;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: #b2bcd1;
-  }
-  &::-webkit-scrollbar-corner {
-    background: transparent;
-  }
+ 
   // Firefox
   scrollbar-width: thin;
   scrollbar-color: #e5e6eb #f8f9fb;

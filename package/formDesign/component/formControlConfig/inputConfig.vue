@@ -16,6 +16,7 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
+      v-model:rules="modelValue.rules"
       :events="inputEvents"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onInput="(fn) => modelValue.$attrs.onInput = fn"
@@ -78,7 +79,7 @@
 import { ref, watchEffect } from 'vue';
 import { watch } from 'vue';
 import CommonConfig from './CommonConfig.vue';
-
+            
 const props = defineProps({
   modelValue: { type: Object, required: true }
 });
@@ -89,6 +90,11 @@ if (!props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
 
+// 初始化校验规则
+if (!props.modelValue.rules) {
+  props.modelValue.rules = [];
+}
+            
 // 定义Input组件支持的事件
 const inputEvents = [
   { key: 'onChange', label: 'change 事件' },
@@ -98,7 +104,7 @@ const inputEvents = [
   { key: 'onPressEnter', label: 'pressEnter 事件' },
   { key: 'onKeydown', label: 'keydown 事件' }
 ];
-
+            
 // 自动设置disabledType和默认值
 if (typeof props.modelValue.disabled === 'function') {
   props.modelValue.disabledType = 'function';
@@ -111,7 +117,7 @@ if (props.modelValue.disabledType === 'boolean' && typeof props.modelValue.disab
 if (props.modelValue.disabledType === 'function' && typeof props.modelValue.disabled !== 'function') {
   props.modelValue.disabled = function(data, form, type) { return false; };
 }
-
+            
 // 自动设置showType和默认值
 if (typeof props.modelValue.show === 'function') {
   props.modelValue.showType = 'function';

@@ -8,7 +8,7 @@
       v-model:showType="modelValue.showType"
       v-model:placeholder="modelValue.$attrs.placeholder"
       v-model:size="modelValue.$attrs.size"
-      :events="colorPickerEvents"
+      :events="colorPickerEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onOpenChange="(fn) => modelValue.$attrs.onOpenChange = fn"
     />
@@ -36,7 +36,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

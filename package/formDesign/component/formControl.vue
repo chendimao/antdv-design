@@ -34,6 +34,7 @@
        v-if="current && configComponentMap[current.type]"
        :is="configComponentMap[current.type]"
        v-model="current"
+       :formConfig="formConfig"
      />
      <!-- 保留原有的inputConfig、radioConfig、numberConfig等静态写法作为兼容 -->
    

@@ -158,7 +158,7 @@ const props = defineProps({
 
 const emits = defineEmits<{
   (event: 'update:formData', value: any[]): void;
-  (event: 'update:currentCom', value: any): void;
+  (event: 'update:currentItem', value: any): void;
   (event: 'update:currentIndex', value: number | undefined): void;
   (event: 'handleSelectComponent', element: any, index?: number): void;
   (event: 'handleDeleteComponent', index: number): void;
@@ -204,7 +204,8 @@ const onDragChange = (event) => {
   console.log('formRender: onDragChange', event);
    if (event.added) {
     _currentIndex.value = event.added.newIndex;
-    _currentItem.value = _formData.value[event.added.newIndex];
+    _currentItem.value = event.added.element;
+    emits('update:currentItem', event.added.element);
   //   console.log('formRender: Added element', event.added);
     
   //   // 获取新添加的元素引用

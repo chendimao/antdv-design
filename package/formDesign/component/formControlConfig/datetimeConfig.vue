@@ -12,7 +12,7 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
-      :events="datetimeEvents"
+      :events="datetimeEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onOpenChange="(fn) => modelValue.$attrs.onOpenChange = fn"
       @update:onPanelChange="(fn) => modelValue.$attrs.onPanelChange = fn"
@@ -43,7 +43,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

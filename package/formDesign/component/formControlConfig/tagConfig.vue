@@ -7,7 +7,7 @@
       v-model:show="modelValue.show"
       v-model:showType="modelValue.showType"
       v-model:size="modelValue.$attrs.size"
-      :events="tagEvents"
+      :events="tagEvents"  :formConfig="formConfig"
       @update:onClick="(fn) => modelValue.$attrs.onClick = fn"
       @update:onClose="(fn) => modelValue.$attrs.onClose = fn"
     />
@@ -47,7 +47,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

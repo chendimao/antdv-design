@@ -12,7 +12,7 @@
       v-model:showType="modelValue.showType"
       v-model:autoFocus="modelValue.$attrs.autofocus"
       v-model:bordered="modelValue.$attrs.bordered"
-      :events="switchEvents"
+      :events="switchEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onClick="(fn) => modelValue.$attrs.onClick = fn"
     />
@@ -45,7 +45,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

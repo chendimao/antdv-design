@@ -6,7 +6,7 @@
       v-model:disabledType="modelValue.disabledType"
       v-model:show="modelValue.show"
       v-model:showType="modelValue.showType"
-      :events="sliderEvents"
+      :events="sliderEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onAfterChange="(fn) => modelValue.$attrs.onAfterChange = fn"
     />
@@ -48,7 +48,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

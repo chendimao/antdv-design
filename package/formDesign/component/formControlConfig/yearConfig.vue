@@ -12,7 +12,7 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
-      :events="yearEvents"
+      :events="yearEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onOpenChange="(fn) => modelValue.$attrs.onOpenChange = fn"
       @update:onPanelChange="(fn) => modelValue.$attrs.onPanelChange = fn"

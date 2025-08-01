@@ -28,7 +28,7 @@
       v-model:show="modelValue.show"
       v-model:showType="modelValue.showType"
       v-model:size="modelValue.$attrs.size"
-      :events="radioEvents"
+      :events="radioEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
       @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
@@ -143,6 +143,10 @@ import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
   modelValue: {
+    type: Object,
+    required: true
+  },
+  formConfig: {
     type: Object,
     required: true
   }

@@ -12,7 +12,7 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
-      :events="autoCompleteEvents"
+      :events="autoCompleteEvents" :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onSelect="(fn) => modelValue.$attrs.onSelect = fn"
       @update:onSearch="(fn) => modelValue.$attrs.onSearch = fn"
@@ -43,7 +43,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

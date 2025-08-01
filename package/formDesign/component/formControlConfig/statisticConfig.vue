@@ -4,7 +4,7 @@
     <CommonConfig
       v-model:disabled="modelValue.$attrs.disabled"
       v-model:disabledType="modelValue.disabledType"
-      v-model:show="modelValue.show"
+      v-model:show="modelValue.show"  :formConfig="formConfig"
       v-model:showType="modelValue.showType"
       :events="statisticEvents"
     />
@@ -46,7 +46,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

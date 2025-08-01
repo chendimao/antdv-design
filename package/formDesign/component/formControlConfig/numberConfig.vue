@@ -10,7 +10,10 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
+      v-model:dynamicValue="modelValue.value"
+      v-model:dynamicValueType="modelValue.dynamicValueType"
       :events="numberEvents"
+      :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
       @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
@@ -41,12 +44,19 @@
 
 <script setup>
 import CommonConfig from './CommonConfig.vue';
+import { computed } from 'vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
-if (!props.modelValue.$attrs) {
+// 确保 modelValue 和 $attrs 存在
+if (!props.modelValue) {
+  console.warn('numberConfig: modelValue is undefined');
+}
+
+if (props.modelValue && !props.modelValue.$attrs) {
   props.modelValue.$attrs = {};
 }
 

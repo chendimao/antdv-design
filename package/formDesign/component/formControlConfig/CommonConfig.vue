@@ -200,6 +200,152 @@
       <a-button @click="showEventCodeEditor" type="primary" style="margin-top:5px;">编辑事件处理</a-button>
     </a-form-item>
 
+    <!-- 动态值设置 -->
+    <a-form-item label="动态值设置" v-if="showDynamicValue">
+      <a-radio-group v-model:value="localDynamicValueType" style="margin-bottom:8px;">
+        <a-radio value="expression">表达式</a-radio>
+        <a-radio value="function">自定义函数</a-radio>
+      </a-radio-group>
+      <template v-if="localDynamicValueType === 'expression'">
+        <a-button @click="showExpressionEditor = true" type="primary" size="small">编辑表达式</a-button>
+      </template>
+      <template v-else>
+        <a-button @click="showDynamicValueEditor = true" type="primary" size="small">编辑函数</a-button>
+      </template>
+    </a-form-item>
+
+    <!-- 表达式编辑器 -->
+    <a-modal
+      v-model:visible="showExpressionEditor"
+      title="表达式配置"
+      width="800px"
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <div class="expression-editor">
+        <div class="expression-header">
+          <div class="expression-label">
+            表达式 = <a-tooltip title="支持数学运算、逻辑运算等">
+              <a-icon type="question-circle" style="color: #ff4d4f;" />
+            </a-tooltip>
+          </div>
+          <div class="expression-input">
+            <a-input
+              v-model:value="expressionCode"
+              placeholder="请输入表达式，如：(formState.field1 + formState.field2) * 2"
+              :rows="4"
+              type="textarea"
+            />
+          </div>
+        </div>
+        
+        <div class="expression-tabs">
+          <a-tabs v-model:activeKey="activeExpressionTab">
+            <a-tab-pane key="fields" tab="字段值">
+              <div class="fields-list">
+                <div v-for="field in availableFields" :key="field.id" class="field-item">
+                  <span class="field-name">{{ field.text }}</span>
+                  <span class="field-id">{{ field.id }}</span>
+                  <a-button 
+                    size="small" 
+                    @click="insertField(field.id)"
+                    type="link"
+                  >
+                    {{ field.text }}
+                  </a-button>
+                </div>
+              </div>
+            </a-tab-pane>
+            <a-tab-pane key="identifiers" tab="字段标识">
+              <div class="identifiers-list">
+                <div v-for="field in availableFields" :key="field.id" class="field-item">
+                  <span class="field-name">{{ field.text }}</span>
+                  <span class="field-id">{{ field.id }}</span>
+                  <a-button 
+                    size="small" 
+                    @click="insertField(field.id)"
+                    type="link"
+                  >
+                    { {{ field.id }} }
+                  </a-button>
+                </div>
+              </div>
+            </a-tab-pane>
+            <a-tab-pane key="variables" tab="变量">
+              <div class="variables-list">
+                <div class="variable-item">
+                  <span class="variable-name">formState</span>
+                  <span class="variable-desc">表单数据对象</span>
+                  <a-button size="small" @click="insertVariable('formState')" type="link">
+                    formState
+                  </a-button>
+                </div>
+                <div class="variable-item">
+                  <span class="variable-name">formData</span>
+                  <span class="variable-desc">表单配置数据</span>
+                  <a-button size="small" @click="insertVariable('formData')" type="link">
+                    formData
+                  </a-button>
+                </div>
+              </div>
+            </a-tab-pane>
+          </a-tabs>
+        </div>
+        
+        <div class="expression-footer">
+          <a-button @click="showExpressionEditor = false">取消</a-button>
+          <a-button type="primary" @click="saveExpression" style="margin-left: 8px;">确定</a-button>
+        </div>
+      </div>
+    </a-modal>
+
+    <!-- 动态值函数编辑器 -->
+    <a-modal
+      v-model:visible="showDynamicValueEditor"
+      title="编辑动态值函数"
+      width="800px"
+      :footer="null"
+      :destroyOnClose="true"
+    >
+      <div class="dynamic-value-editor">
+        <div class="editor-header">
+          <p class="editor-tip">
+            函数格式：<code>(formState, formData) => { return ... }</code><br>
+            参数说明：formState 为表单数据，formData 为表单配置
+          </p>
+        </div>
+        
+        <div class="editor-content">
+          <code-mirror
+            v-model:value="dynamicValueFuncCode"
+            :language="'javascript'"
+            :height="'300px'"
+            :width="'100%'"
+            :showFooter="false"
+            :showCheckSyntax="true"
+            placeholder="(formState, formData) => {
+  return (formState.field1 + formState.field2) * 2 - 2;
+}"
+            :options="{ 
+              theme: 'monokai',
+              lineNumbers: true,
+              lineWrapping: true,
+              tabSize: 2,
+              indentUnit: 2,
+              matchBrackets: true,
+              autoCloseBrackets: true,
+              styleActiveLine: true
+            }"
+          />
+        </div>
+        
+        <div class="editor-footer">
+          <a-button @click="showDynamicValueEditor = false">取消</a-button>
+          <a-button type="primary" @click="saveDynamicValueFunction" style="margin-left: 8px;">保存</a-button>
+        </div>
+      </div>
+    </a-modal>
+
     <!-- 事件处理代码编辑器模态框 -->
     <a-modal
       v-model:visible="eventEditorVisible"
@@ -281,9 +427,20 @@ const props = defineProps({
   showStatus: { type: Boolean, default: true },
   showAutoFocus: { type: Boolean, default: true },
   showEvents: { type: Boolean, default: true },
+  showDynamicValue: { type: Boolean, default: true },
   
   // 事件列表
-  events: { type: Array, default: () => [] }
+  events: { type: Array, default: () => [] },
+  
+  // 动态值相关
+  dynamicValue: [String, Function],
+  dynamicValueType: { type: String, default: 'expression' },
+  
+  // 可用字段列表
+  availableFields: { type: Array, default: () => [] },
+  
+  // 表单配置（用于获取字段列表）
+  formConfig: { type: Object, default: () => ({}) }
 });
 
 const emit = defineEmits([
@@ -291,7 +448,8 @@ const emit = defineEmits([
   'update:show', 'update:showType',
   'update:rules',
   'update:placeholder', 'update:allowClear', 'update:bordered', 
-  'update:size', 'update:status', 'update:autoFocus'
+  'update:size', 'update:status', 'update:autoFocus',
+  'update:dynamicValue', 'update:dynamicValueType'
 ]);
 
 // 禁用相关
@@ -321,6 +479,13 @@ const localSize = ref(props.size);
 const localStatus = ref(props.status);
 const localAutoFocus = ref(props.autoFocus);
 
+// 动态值设置相关
+const localDynamicValueType = ref(props.dynamicValueType);
+const showExpressionEditor = ref(false);
+const expressionCode = ref('');
+const showDynamicValueEditor = ref(false);
+const dynamicValueFuncCode = ref('');
+
 // 事件编辑器相关
 const eventEditorVisible = ref(false);
 const activeEventTab = ref('onChange');
@@ -334,6 +499,51 @@ const eventList = computed(() => {
     { key: 'onFocus', label: 'focus 事件' },
     { key: 'onBlur', label: 'blur 事件' }
   ];
+});
+
+// 计算可用字段列表
+const availableFields = computed(() => {
+  // 优先使用传入的 availableFields
+  if (props.availableFields.length > 0) {
+    return props.availableFields;
+  }
+  
+  // 从 formConfig.value.formData 中获取字段列表
+  if (props.formConfig && props.formConfig.value && props.formConfig.value.formData) {
+    const formData = props.formConfig.value.formData;
+    return formData.map(item => ({
+      id: item.name || item.id || `field_${Math.random().toString(36).substr(2, 9)}`,
+      text: item.label || item.text || item.name || '未命名字段'
+    })).filter(field => field.id && field.text);
+  }
+  
+  // 默认返回示例数据
+  return [
+    { id: 'field1', text: '字段1' },
+    { id: 'field2', text: '字段2' },
+    { id: 'field3', text: '字段3' },
+    { id: 'field4', text: '字段4' },
+    { id: 'field5', text: '字段5' },
+  ];
+});
+
+const activeExpressionTab = ref('fields');
+
+// 初始化动态值
+watchEffect(() => {
+  if (props.dynamicValue) {
+    if (typeof props.dynamicValue === 'function') {
+      // 如果是函数，提取函数体
+      const fnStr = props.dynamicValue.toString();
+      const body = fnStr.replace(/^\([^)]*\)\s*=>\s*{([\s\S]*)}$/, '$1').trim();
+      dynamicValueFuncCode.value = body;
+      localDynamicValueType.value = 'function';
+    } else {
+      // 如果是字符串，作为表达式
+      expressionCode.value = props.dynamicValue;
+      localDynamicValueType.value = 'expression';
+    }
+  }
 });
 
 // 初始化事件代码映射
@@ -393,6 +603,8 @@ watch(() => props.bordered, v => { localBordered.value = v; });
 watch(() => props.size, v => { localSize.value = v; });
 watch(() => props.status, v => { localStatus.value = v; });
 watch(() => props.autoFocus, v => { localAutoFocus.value = v; });
+watch(() => props.dynamicValue, v => { emit('update:dynamicValue', v); });
+watch(() => props.dynamicValueType, v => { localDynamicValueType.value = v; });
 
 // 监听本地变化并触发更新
 watch(localDisabled, v => { emit('update:disabled', v); });
@@ -404,6 +616,7 @@ watch(localAllowClear, v => { emit('update:allowClear', v); });
 watch(localSize, v => { emit('update:size', v); });
 watch(localStatus, v => { emit('update:status', v); });
 watch(localAutoFocus, v => { emit('update:autoFocus', v); });
+watch(localDynamicValueType, v => { emit('update:dynamicValueType', v); });
 
 // 禁用函数相关
 watchEffect(() => {
@@ -613,6 +826,67 @@ const saveCustomRule = () => {
     }
   }
 };
+
+// 动态值设置相关
+const insertField = (fieldId) => {
+  const field = availableFields.value.find(f => f.id === fieldId);
+  if (field) {
+    const insertText = `formState.${fieldId}`;
+    const currentCode = expressionCode.value;
+    const cursorPosition = expressionCode.value.length;
+    const newCode = currentCode.substring(0, cursorPosition) + insertText + currentCode.substring(cursorPosition);
+    expressionCode.value = newCode;
+  }
+};
+
+const insertVariable = (variableName) => {
+  const currentCode = expressionCode.value;
+  const cursorPosition = expressionCode.value.length;
+  const newCode = currentCode.substring(0, cursorPosition) + variableName + currentCode.substring(cursorPosition);
+  expressionCode.value = newCode;
+};
+
+const saveExpression = () => {
+  try {
+    // 验证表达式语法
+    const testFunc = new Function('formState, formData', `return ${expressionCode.value}`);
+    // 测试执行（使用模拟数据）
+    const testFormState = {};
+    const testFormData = {};
+    testFunc(testFormState, testFormData);
+    
+    // 保存表达式
+    emit('update:dynamicValue', expressionCode.value);
+    emit('update:dynamicValueType', 'expression');
+    showExpressionEditor.value = false;
+    message.success('表达式保存成功');
+  } catch (error) {
+    message.error(`表达式语法错误: ${error.message}`);
+  }
+};
+
+const saveDynamicValueFunction = () => {
+  try {
+    // 构建完整的函数
+    const fullFunction = `(formState, formData) => { return ${dynamicValueFuncCode.value}; }`;
+    
+    // 验证函数语法
+    const testFunc = new Function('formState, formData', `return ${dynamicValueFuncCode.value}`);
+    // 测试执行（使用模拟数据）
+    const testFormState = {};
+    const testFormData = {};
+    testFunc(testFormState, testFormData);
+    
+    // 保存函数
+    const finalFunction = new Function('formState, formData', `return ${dynamicValueFuncCode.value}`);
+    emit('update:dynamicValue', finalFunction);
+    emit('update:dynamicValueType', 'function');
+    showDynamicValueEditor.value = false;
+    message.success('动态值函数保存成功');
+  } catch (error) {
+    message.error(`函数语法错误: ${error.message}`);
+  }
+};
 </script>
 
 <style scoped lang="less">
@@ -689,6 +963,120 @@ const saveCustomRule = () => {
 }
 
 .validator-editor {
+  .editor-header {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    .editor-tip {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 8px;
+
+      code {
+        background-color: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .editor-content {
+    height: 300px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .editor-footer {
+    margin-top: 16px;
+    text-align: right;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
+}
+
+.expression-editor {
+  .expression-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+
+    .expression-label {
+      font-size: 14px;
+      color: #555;
+      margin-right: 8px;
+      display: flex;
+      align-items: center;
+
+      .anticon {
+        margin-left: 4px;
+      }
+    }
+
+    .expression-input {
+      flex: 1;
+    }
+  }
+
+  .expression-tabs {
+    margin-bottom: 16px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .ant-tabs-nav {
+      margin-bottom: 0;
+    }
+
+    .ant-tabs-content {
+      padding: 12px;
+    }
+
+    .fields-list, .identifiers-list, .variables-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 0;
+    }
+
+    .field-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background-color: #e6f7ff;
+      border-radius: 4px;
+      border: 1px solid #91d5ff;
+      color: #1890ff;
+      font-size: 13px;
+    }
+
+    .variable-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background-color: #fffbe6;
+      border-radius: 4px;
+      border: 1px solid #ffe58f;
+      color: #faad14;
+      font-size: 13px;
+    }
+  }
+
+  .expression-footer {
+    margin-top: 16px;
+    text-align: right;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 16px;
+  }
+}
+
+.dynamic-value-editor {
   .editor-header {
     margin-bottom: 16px;
     padding-bottom: 12px;

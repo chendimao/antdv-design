@@ -16,7 +16,7 @@
       v-model:size="modelValue.$attrs.size"
       v-model:status="modelValue.$attrs.status"
       v-model:autoFocus="modelValue.$attrs.autofocus"
-      :events="textareaEvents"
+      :events="textareaEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onInput="(fn) => modelValue.$attrs.onInput = fn"
       @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
@@ -45,7 +45,8 @@
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

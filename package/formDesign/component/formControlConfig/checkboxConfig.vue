@@ -10,7 +10,7 @@
       v-model:disabledType="modelValue.disabledType"
       v-model:show="modelValue.show"
       v-model:showType="modelValue.showType"
-      :events="checkboxEvents"
+      :events="checkboxEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onFocus="(fn) => modelValue.$attrs.onFocus = fn"
       @update:onBlur="(fn) => modelValue.$attrs.onBlur = fn"
@@ -58,7 +58,8 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);

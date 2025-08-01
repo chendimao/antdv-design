@@ -109,7 +109,7 @@
         <a-row   style="padding: 5px;margin: 2px; ">
           <form-render
               v-model:formData="formConfig.formData"
-              :currentItem="formConfig.currentItem"
+              v-model:currentItem="formConfig.currentItem"
               :currentIndex="formConfig.currentIndex"
               @handleSelectComponent="handleSelectComponent"
               @selectAdded="handleComponentAdded"
@@ -329,10 +329,8 @@ watch(() => formConfig.value.formData, (val) => {
   console.log(val);
 }, {deep: true});
 
-watch(() => formConfig.value.currentItem, (val) => {
-  console.log(val, formConfig.value.formData, formConfig.value.currentIndex);
-  
-  formConfig.value.formData[formConfig.value.currentIndex] = val;
+watch(() => formConfig.value.currentItem, (val) => { 
+ // formConfig.value.formData[formConfig.value.currentIndex] = val;
 }, {deep: true});
 
 

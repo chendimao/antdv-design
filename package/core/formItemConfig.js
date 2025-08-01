@@ -58,14 +58,27 @@ export const baseComponent  = [
         span: 24,
         show: true,
         value: '',
-        disabled: (data, form, type) => {
-            return false;
-        },
+        disabled: false,
+        disabledType: 'boolean',
+        showType: 'boolean',
         labelCol: { style: { width: '100px' } },
         labelAlign: 'right',
         wrapperCol: {  },
         rules:[
         ],
+        dynamicValue: null,
+        dynamicValueType: 'expression',
+        $attrs: {
+            placeholder: '请输入数字',
+            min: undefined,
+            max: undefined,
+            step: 1,
+            precision: undefined,
+            stringMode: false,
+            size: 'default',
+            status: undefined,
+            autofocus: false,
+        },
         icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
           <text x="12" y="14" text-anchor="middle" font-size="10" fill="currentColor" font-family="Arial">123</text>
@@ -84,6 +97,7 @@ export const baseComponent  = [
               ],
               optionsValueType: "string",
               defaultValueType: "string",
+              disabled: false,
         },
         value: '',
         disabled: (data, form, type) => {

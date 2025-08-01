@@ -10,7 +10,7 @@
       v-model:allowClear="modelValue.$attrs.allowClear"
       v-model:bordered="modelValue.$attrs.bordered"
       v-model:size="modelValue.$attrs.size"
-      :events="selectEvents"
+      :events="selectEvents"  :formConfig="formConfig"
       @update:onChange="(fn) => modelValue.$attrs.onChange = fn"
       @update:onSelect="(fn) => modelValue.$attrs.onSelect = fn"
       @update:onDeselect="(fn) => modelValue.$attrs.onDeselect = fn"
@@ -90,7 +90,8 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import CommonConfig from './CommonConfig.vue';
 
 const props = defineProps({
-  modelValue: { type: Object, required: true }
+  modelValue: { type: Object, required: true },
+  formConfig: { type: Object, required: true }
 });
 
 const emit = defineEmits(['update:modelValue']);
